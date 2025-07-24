@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceGrad - Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #1e3a8a;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #1e40af;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: #10b981;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            border-color: #3b82f6;
+            background: #f8faff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .users-table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            max-width: 300px;
+            margin: 0;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table th,
+        .users-table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .users-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .users-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .role-student {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .role-faculty {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .role-admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-active {
+            color: #10b981;
+        }
+
+        .status-inactive {
+            color: #ef4444;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .csv-template {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .csv-template h4 {
+            color: #1e40af;
+            margin-bottom: 10px;
+        }
+
+        .csv-template code {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            display: block;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-user-shield"></i>
+                Admin Dashboard - PlaceGrad
+            </h1>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+
+        <!-- Alerts -->
+        <div id="successAlert" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span id="successMessage"></span>
+        </div>
+        
+        <div id="errorAlert" class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorMessage"></span>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Add Single User -->
+            <div class="card">
+                <h2>
+                    <i class="fas fa-user-plus"></i>
+                    Add New User
+                </h2>
+                <form id="addUserForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">Username *</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <input type="password" id="password" name="password" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role *</label>
+                            <select id="role" name="role" required>
+                                <option value="student">Student</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" name="firstName">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" name="lastName">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="enrollmentNumber">Enrollment Number</label>
+                            <input type="text" id="enrollmentNumber" name="enrollmentNumber">
+                        </div>
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <input type="text" id="department" name="department">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="semester">Semester</label>
+                            <input type="number" id="semester" name="semester" min="1" max="8">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <i class="fas fa-plus"></i>
+                        Add User
+                    </button>
+                </form>
+            </div>
+
+            <!-- Bulk Upload Users -->
+            <div class="card">
+                <h2>
+                    <i class="fas fa-upload"></i>
+                    Bulk Upload Users
+                </h2>
+                
+                <div class="file-upload-area" onclick="document.getElementById('csvFile').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <strong>Click to upload CSV file</strong> or drag and drop
+                    </div>
+                    <div style="color: #9ca3af; font-size: 14px;">
+                        Maximum file size: 10MB
+                    </div>
+                </div>
+                
+                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                
+                <div id="fileInfo" class="file-info">
+                    <div id="fileName"></div>
+                    <div id="fileSize"></div>
+                </div>
+
+                <button id="uploadBtn" class="btn btn-success" style="margin-top: 15px; display: none;" onclick="uploadCSV()">
+                    <i class="fas fa-upload"></i>
+                    Upload CSV
+                </button>
+
+                <!-- CSV Template -->
+                <div class="csv-template">
+                    <h4>CSV Format Template:</h4>
+                    <code>username,email,password,role,firstName,lastName,enrollmentNumber,department,semester,phone</code>
+                    <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+                        • Required fields: username, email, password, role<br>
+                        • Role must be: student, faculty, or admin<br>
+                        • First row should contain headers
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="users-table-container">
+            <div class="table-header">
+                <h2>
+                    <i class="fas fa-users"></i>
+                    Manage Users
+                </h2>
+                <div class="form-group search-box">
+                    <input type="text" id="searchUsers" placeholder="Search users..." onkeyup="searchUsers()">
+                </div>
+            </div>
+            
+            <div style="overflow-x: auto;">
+                <table class="users-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Name</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Last Login</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is admin on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminAuth();
+            loadUsers();
+            setupFileUpload();
+        });
+
+        function checkAdminAuth() {
+            const token = localStorage.getItem('authToken');
+            const userData = JSON.parse(localStorage.getItem('user') || '{}');
+            if (!token || userData.role !== 'admin') {
+                window.location.href = '/';
+                return;
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            sessionStorage.clear();
+            window.location.href = '/';
+        }
+
+        function showAlert(type, message) {
+            const alertId = type === 'success' ? 'successAlert' : 'errorAlert';
+            const messageId = type === 'success' ? 'successMessage' : 'errorMessage';
+            
+            document.getElementById(messageId).textContent = message;
+            document.getElementById(alertId).style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById(alertId).style.display = 'none';
+            }, 5000);
+        }
+
+        // Add single user
+        document.getElementById('addUserForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const userData = {
+                username: formData.get('username'),
+                email: formData.get('email'),
+                password: formData.get('password'),
+                role: formData.get('role'),
+                profile: {
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    enrollmentNumber: formData.get('enrollmentNumber'),
+                    department: formData.get('department'),
+                    semester: parseInt(formData.get('semester')) || null,
+                    phone: formData.get('phone')
+                }
+            };
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', 'User added successfully!');
+                    e.target.reset();
+                    loadUsers();
+                } else {
+                    showAlert('error', result.message || 'Failed to add user');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        });
+
+        // File upload setup
+        function setupFileUpload() {
+            const fileInput = document.getElementById('csvFile');
+            const uploadArea = document.querySelector('.file-upload-area');
+            const fileInfo = document.getElementById('fileInfo');
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Drag and drop
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    handleFileSelect();
+                }
+            });
+        }
+
+        function handleFileSelect() {
+            const fileInput = document.getElementById('csvFile');
+            const fileInfo = document.getElementById('fileInfo');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName.textContent = `File: ${file.name}`;
+                fileSize.textContent = `Size: ${(file.size / 1024).toFixed(2)} KB`;
+                fileInfo.style.display = 'block';
+                uploadBtn.style.display = 'inline-flex';
+            }
+        }
+
+        async function uploadCSV() {
+            const fileInput = document.getElementById('csvFile');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
+            if (!fileInput.files[0]) {
+                showAlert('error', 'Please select a CSV file');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                showAlert('error', 'Please select a valid CSV file');
+                return;
+            }
+
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<div class="loading"></div> Processing...';
+
+            try {
+                const text = await file.text();
+                const users = parseCSV(text);
+                
+                if (users.length === 0) {
+                    showAlert('error', 'No valid users found in CSV');
+                    return;
+                }
+
+                // Upload users one by one
+                let successCount = 0;
+                let errorCount = 0;
+                const errors = [];
+
+                for (let i = 0; i < users.length; i++) {
+                    try {
+                        const response = await fetch('/api/auth/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                            },
+                            body: JSON.stringify(users[i])
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            successCount++;
+                        } else {
+                            errorCount++;
+                            errors.push(`Row ${i + 2}: ${result.message}`);
+                        }
+                    } catch (error) {
+                        errorCount++;
+                        errors.push(`Row ${i + 2}: Server error`);
+                    }
+                }
+
+                let message = `Upload completed: ${successCount} users added`;
+                if (errorCount > 0) {
+                    message += `, ${errorCount} errors`;
+                }
+
+                showAlert(errorCount === 0 ? 'success' : 'error', message);
+                
+                if (errors.length > 0 && errors.length <= 5) {
+                    console.log('Errors:', errors);
+                }
+
+                // Reset form
+                fileInput.value = '';
+                document.getElementById('fileInfo').style.display = 'none';
+                uploadBtn.style.display = 'none';
+                
+                loadUsers();
+
+            } catch (error) {
+                showAlert('error', 'Failed to process CSV file');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload CSV';
+            }
+        }
+
+        function parseCSV(text) {
+            const lines = text.split('\n').filter(line => line.trim());
+            if (lines.length < 2) return [];
+
+            const headers = lines[0].split(',').map(h => h.trim());
+            const users = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                if (values.length < 4) continue;
+
+                const user = {
+                    username: values[0],
+                    email: values[1],
+                    password: values[2],
+                    role: values[3] || 'student',
+                    profile: {
+                        firstName: values[4] || '',
+                        lastName: values[5] || '',
+                        enrollmentNumber: values[6] || '',
+                        department: values[7] || '',
+                        semester: values[8] ? parseInt(values[8]) : null,
+                        phone: values[9] || ''
+                    }
+                };
+
+                if (user.username && user.email && user.password && ['student', 'faculty', 'admin'].includes(user.role)) {
+                    users.push(user);
+                }
+            }
+
+            return users;
+        }
+
+        // Load and display users
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displayUsers(result.users || []);
+                }
+            } catch (error) {
+                console.error('Failed to load users:', error);
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td><span class="role-badge role-${user.role}">${user.role}</span></td>
+                    <td>${user.profile?.firstName || ''} ${user.profile?.lastName || ''}</td>
+                    <td>${user.profile?.department || '-'}</td>
+                    <td><span class="status-${user.isActive ? 'active' : 'inactive'}">${user.isActive ? 'Active' : 'Inactive'}</span></td>
+                    <td>${user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never'}</td>
+                    <td>
+                        <button onclick="toggleUserStatus('${user._id}', ${user.isActive})" class="btn" style="padding: 5px 10px; font-size: 12px;">
+                            ${user.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchUsers').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        async function toggleUserStatus(userId, currentStatus) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/toggle-status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    showAlert('success', 'User status updated successfully');
+                    loadUsers();
+                } else {
+                    showAlert('error', 'Failed to update user status');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
