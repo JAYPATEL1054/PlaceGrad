@@ -419,18 +419,17 @@
             <img src="https://www.ldrp.ac.in/wp-content/uploads/LDRP-logo-3.png" alt="LDRP Logo" class="header-logo">
         </div>
 
-        <!-- Profile Section in Top Right -->
         <div class="profile-section">
             <div class="profile-dropdown">
                 <button class="profile-btn">
-                    <img src="https://ui-avatars.com/api/?name=John+Doe&background=0D8ABC&color=fff&size=200&bold=true" alt="Profile" class="profile-img">
-                    <span>John Doe</span>
+                    <img src="https://ui-avatars.com/api/?name=Loading&background=0D8ABC&color=fff&size=200&bold=true" alt="Profile" class="profile-img">
+                    <span>Loading...</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="profile-dropdown-content">
                     <a href="profile.html"><i class="fas fa-user"></i> View Profile</a>
-                    <a href="#"><i class="fas fa-file-alt"></i> My Resume</a>
-                    <a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                    <a href="#" id="resumeLink"><i class="fas fa-file-alt"></i> My Resume</a>
+                    <a href="#" id="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
         </div>
@@ -509,7 +508,8 @@
             </div>
         </div>
     </div>
-
+    <!-- Include the user authentication script -->
+    <script src="user-profile.js"></script>
     <script>
         // Initialize companies data array
         let companiesData = [];
