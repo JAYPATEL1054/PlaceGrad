@@ -6,17 +6,17 @@ const {
     getAllUsers,
     toggleUserStatus
 } = require('../controllers/userController');
-const { authenticateToken, authorizeRole } = require('../middleware/auth');
+const { auth, adminOnly, facultyOrAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
 // Protected routes - require authentication
-router.get('/profile', authenticateToken, getProfile);
-router.put('/profile', authenticateToken, updateProfile);
-router.post('/change-password', authenticateToken, changePassword);
+router.get('/profile', auth, getProfile);
+router.put('/profile', auth, updateProfile);
+router.post('/change-password', auth, changePassword);
 
 // Admin only routes
-router.get('/all', authenticateToken, authorizeRole('admin'), getAllUsers);
-router.patch('/:userId/toggle-status', authenticateToken, authorizeRole('admin'), toggleUserStatus);
+router.get('/all', auth, adminOnly, getAllUsers);
+router.patch('/:userId/toggle-status', auth, adminOnly, toggleUserStatus);
 
 module.exports = router;

@@ -45,9 +45,23 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+// Profile page route
+app.get('/profile', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
 // Admin dashboard route
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin-dashboard.html'));
+});
+
+// Companies pages routes
+app.get('/companies', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'companies.html'));
+});
+
+app.get('/add-companies', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'add-companies.html'));
 });
 
 // Health check endpoint
