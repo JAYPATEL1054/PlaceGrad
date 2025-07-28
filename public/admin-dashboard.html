@@ -360,79 +360,6 @@
 
         <!-- Dashboard Grid -->
         <div class="dashboard-grid">
-            <!-- Add Single User -->
-            <div class="card">
-                <h2>
-                    <i class="fas fa-user-plus"></i>
-                    Add New User
-                </h2>
-                <form id="addUserForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="username">Username *</label>
-                            <input type="text" id="username" name="username" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email *</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="password">Password *</label>
-                            <input type="password" id="password" name="password" required minlength="6">
-                        </div>
-                        <div class="form-group">
-                            <label for="role">Role *</label>
-                            <select id="role" name="role" required>
-                                <option value="student">Student</option>
-                                <option value="faculty">Faculty</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" name="firstName">
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" name="lastName">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="enrollmentNumber">Enrollment Number</label>
-                            <input type="text" id="enrollmentNumber" name="enrollmentNumber">
-                        </div>
-                        <div class="form-group">
-                            <label for="department">Department</label>
-                            <input type="text" id="department" name="department">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="semester">Semester</label>
-                            <input type="number" id="semester" name="semester" min="1" max="8">
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Phone</label>
-                            <input type="tel" id="phone" name="phone">
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn">
-                        <i class="fas fa-plus"></i>
-                        Add User
-                    </button>
-                </form>
-            </div>
-
             <!-- Bulk Upload Users -->
             <div class="card">
                 <h2>
@@ -467,13 +394,140 @@
                 <!-- CSV Template -->
                 <div class="csv-template">
                     <h4>CSV Format Template:</h4>
-                    <code>username,email,password,role,firstName,lastName,enrollmentNumber,department,semester,phone</code>
+                    <code>Email,Name,Gender,10th board,10th Percentage,12th board,12th Percentage,Stream,Cpga,Internships(Y/N),Training(Y/N),Backlog in Past,Innovative Project(Y/N),Enrollment number</code>
                     <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
-                        • Required fields: username, email, password, role<br>
-                        • Role must be: student, faculty, or admin<br>
+                        • Required fields: Email, Name, Enrollment number<br>
+                        • Enrollment number will be used as the username<br>
                         • First row should contain headers
                     </div>
                 </div>
+            </div>
+
+            <!-- Add Single User -->
+            <div class="card">
+                <h2>
+                    <i class="fas fa-user-plus"></i>
+                    Add New User
+                </h2>
+                <form id="addUserForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">Name *</label>
+                            <input type="text" id="firstName" name="firstName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gender">Gender</label>
+                            <select id="gender" name="gender">
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="enrollmentNumber">Enrollment Number *</label>
+                            <input type="text" id="enrollmentNumber" name="enrollmentNumber" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tenthBoard">10th Board</label>
+                            <input type="text" id="tenthBoard" name="tenthBoard">
+                        </div>
+                        <div class="form-group">
+                            <label for="tenthPercentage">10th Percentage</label>
+                            <input type="text" id="tenthPercentage" name="tenthPercentage">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="twelfthBoard">12th Board</label>
+                            <input type="text" id="twelfthBoard" name="twelfthBoard">
+                        </div>
+                        <div class="form-group">
+                            <label for="twelfthPercentage">12th Percentage</label>
+                            <input type="text" id="twelfthPercentage" name="twelfthPercentage">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="stream">Stream</label>
+                            <input type="text" id="stream" name="stream">
+                        </div>
+                        <div class="form-group">
+                            <label for="cpga">CGPA</label>
+                            <input type="text" id="cpga" name="cpga">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="internships">Internships</label>
+                            <select id="internships" name="internships">
+                                <option value="">Select</option>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="training">Training</label>
+                            <select id="training" name="training">
+                                <option value="">Select</option>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="backlog">Backlog in Past</label>
+                            <select id="backlog" name="backlog">
+                                <option value="">Select</option>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="innovativeProject">Innovative Project</label>
+                            <select id="innovativeProject" name="innovativeProject">
+                                <option value="">Select</option>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password *</label>
+                            <input type="password" id="password" name="password" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role *</label>
+                            <select id="role" name="role" required>
+                                <option value="student">Student</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <i class="fas fa-plus"></i>
+                        Add User
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -552,18 +606,36 @@
             e.preventDefault();
             
             const formData = new FormData(e.target);
+            const fullName = formData.get('firstName') || '';
+            
+            // Split full name into first and last name
+            const nameParts = fullName.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+            
+            // Use enrollment number as username
+            const enrollmentNumber = formData.get('enrollmentNumber');
+            
             const userData = {
-                username: formData.get('username'),
+                username: enrollmentNumber,
                 email: formData.get('email'),
                 password: formData.get('password'),
                 role: formData.get('role'),
                 profile: {
-                    firstName: formData.get('firstName'),
-                    lastName: formData.get('lastName'),
-                    enrollmentNumber: formData.get('enrollmentNumber'),
-                    department: formData.get('department'),
-                    semester: parseInt(formData.get('semester')) || null,
-                    phone: formData.get('phone')
+                    firstName: firstName,
+                    lastName: lastName,
+                    enrollmentNumber: enrollmentNumber,
+                    gender: formData.get('gender'),
+                    tenthBoard: formData.get('tenthBoard'),
+                    tenthPercentage: formData.get('tenthPercentage'),
+                    twelfthBoard: formData.get('twelfthBoard'),
+                    twelfthPercentage: formData.get('twelfthPercentage'),
+                    stream: formData.get('stream'),
+                    cpga: formData.get('cpga'),
+                    internships: formData.get('internships'),
+                    training: formData.get('training'),
+                    backlog: formData.get('backlog'),
+                    innovativeProject: formData.get('innovativeProject')
                 }
             };
 
@@ -730,28 +802,72 @@
 
             for (let i = 1; i < lines.length; i++) {
                 const values = lines[i].split(',').map(v => v.trim());
-                if (values.length < 4) continue;
+                if (values.length < 3) continue; // At least email, name, and enrollment number
+
+                // Map CSV columns to expected fields
+                const email = values[0];
+                const fullName = values[1] || '';
+                const gender = values[2] || '';
+                const tenthBoard = values[3] || '';
+                const tenthPercentage = values[4] || '';
+                const twelfthBoard = values[5] || '';
+                const twelfthPercentage = values[6] || '';
+                const stream = values[7] || '';
+                const cpga = values[8] || '';
+                const internships = values[9] || '';
+                const training = values[10] || '';
+                const backlog = values[11] || '';
+                const innovativeProject = values[12] || '';
+                // Get enrollment number from the last column instead of a fixed position
+                const enrollmentNumber = values[values.length - 1] || '';
+                
+                // Add debug logging to see what's in the CSV
+                console.log('Processing row:', values);
+                console.log('Enrollment number found:', enrollmentNumber);
+                
+                // Split full name into first and last name
+                const nameParts = fullName.split(' ');
+                const firstName = nameParts[0] || '';
+                const lastName = nameParts.slice(1).join(' ') || '';
+                
+                // Use enrollment number as username
+                const username = enrollmentNumber;
+                
+                // Generate a default password (can be changed by user later)
+                const defaultPassword = 'Password@123';
 
                 const user = {
-                    username: values[0],
-                    email: values[1],
-                    password: values[2],
-                    role: values[3] || 'student',
+                    username: username,
+                    email: email,
+                    password: defaultPassword,
+                    role: 'student', // Default role for CSV uploads
                     profile: {
-                        firstName: values[4] || '',
-                        lastName: values[5] || '',
-                        enrollmentNumber: values[6] || '',
-                        department: values[7] || '',
-                        semester: values[8] ? parseInt(values[8]) : null,
-                        phone: values[9] || ''
+                        firstName: firstName,
+                        lastName: lastName,
+                        enrollmentNumber: enrollmentNumber,
+                        gender: gender,
+                        tenthBoard: tenthBoard,
+                        tenthPercentage: tenthPercentage,
+                        twelfthBoard: twelfthBoard,
+                        twelfthPercentage: twelfthPercentage,
+                        stream: stream,
+                        cpga: cpga,
+                        internships: internships,
+                        training: training,
+                        backlog: backlog,
+                        innovativeProject: innovativeProject
                     }
                 };
 
-                if (user.username && user.email && user.password && ['student', 'faculty', 'admin'].includes(user.role)) {
+                // Validate required fields - make sure both username and email are present
+                if (username && email) {
                     users.push(user);
+                } else {
+                    console.log('Invalid user data:', { username, email, row: i + 1 });
                 }
             }
 
+            console.log(`Parsed ${users.length} valid users from CSV`);
             return users;
         }
 
