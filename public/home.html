@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceGrad - Home</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+    <!-- Background Image -->
+    <div class="tp-bgimg"></div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Floating Decorative Circles -->
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="top-header">
+        <div class="logo-container-top">
+            <img src="https://www.ldrp.ac.in/wp-content/uploads/LDRP-logo-3.png" alt="LDRP Logo" class="top-logo">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="#">Companies</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#">Support</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Main Logo Section -->
+        <div class="main-logo-section">
+            <svg width="100" height="100" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" class="main-logo-svg">
+                <!-- Outer Circle -->
+                <circle cx="150" cy="150" r="140" stroke="#1E90FF" stroke-width="8" fill="none" />
+                
+                <!-- Graduation Cap Icon -->
+                <text x="150" y="120" font-size="32" text-anchor="middle" dominant-baseline="middle">🎓</text>
+                
+                <!-- Brand Name -->
+                <text x="150" y="180" font-size="28" font-family="Arial, sans-serif" font-weight="bold"
+                      text-anchor="middle" fill="#2E8B57">PlaceGrad</text>
+                
+                <!-- Optional Tagline -->
+                <text x="150" y="210" font-size="14" font-family="Arial, sans-serif"
+                      text-anchor="middle" fill="#555">Your Gateway to Careers</text>
+            </svg>
+        </div>
+
+        <div class="portal-title-section">
+            <h1 class="portal-title">PlaceGrad</h1>
+            <p class="portal-description">
+                PlaceGrad is the official placement portal for LDRP Institute of Technology and Research students. Our platform connects students with career opportunities and top companies. Get access to job openings, interview preparation resources, and placement guidance. Track your placement journey with real-time updates and personalized support. Transform your academic achievements into professional success with PlaceGrad.
+            </p>
+        </div>
+        
+        <section class="welcome-section">
+            <h2>Your Gateway to Career Success</h2>
+            <p>Discover endless possibilities with our industry-connected placement portal.</p>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+        <div class="copyright">
+            © 2025 LDRP Institute of Technology and Research. All rights reserved.
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Support</a>
+        </div>
+    </footer>
+
+    <!-- Chatbot Button -->
+    <button id="chatbot-toggle" onclick="toggleChatbot()">🤖 Chat with Us</button>
+    
+    <!-- Chatbot Box -->
+    <div id="chatbot-box">
+        <div id="chatbot-header">PlaceGrad Assistant <span id="chatbot-close" onclick="toggleChatbot()">×</span></div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input">
+            <textarea id="user-input" placeholder="Ask about placements, interviews..." rows="1"></textarea>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleChatbot() {
+            const bot = document.getElementById('chatbot-box');
+            bot.style.display = (bot.style.display === 'none' || bot.style.display === '') ? 'flex' : 'none';
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            const messagesDiv = document.getElementById('chatbot-messages');
+        
+            if (message) {
+                messagesDiv.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
+                const botResponse = getBotResponse(message);
+                setTimeout(() => {
+                    messagesDiv.innerHTML += `<div><strong>Bot:</strong> ${botResponse}</div>`;
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                }, 500);
+                input.value = '';
+            }
+        }
+        
+        function getBotResponse(msg) {
+            msg = msg.toLowerCase();
+        
+            if (msg.includes("interview")) return "We suggest preparing HR + technical questions listed in Training Materials.";
+            if (msg.includes("resume")) return "Ensure your resume is 1 page, clean and ATS-friendly.";
+            if (msg.includes("aptitude")) return "Check out the Aptitude Test under Training Materials.";
+            if (msg.includes("company") || msg.includes("companies")) return "Go to the Companies section to explore upcoming drives.";
+            if (msg.includes("hello") || msg.includes("hi")) return "Hello! How can I help you today?";
+            
+            return "I'm here to help with placement, aptitude, and resume tips!";
+        }
+
+        document.getElementById("user-input").addEventListener("input", function () {
+            this.style.height = "auto";
+            this.style.height = this.scrollHeight + "px";
+        });
+    </script>
+</body>
+</html>
