@@ -1,0 +1,15 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Circle -->
+  <circle cx="150" cy="150" r="140" stroke="#1E90FF" stroke-width="8" fill="none" />
+
+  <!-- Graduation Cap Icon -->
+  <text x="150" y="120" font-size="32" text-anchor="middle" dominant-baseline="middle">🎓</text>
+
+  <!-- Brand Name -->
+  <text x="150" y="180" font-size="28" font-family="Arial, sans-serif" font-weight="bold"
+        text-anchor="middle" fill="#2E8B57">PlaceGrad</text>
+
+  <!-- Optional Tagline -->
+  <text x="150" y="210" font-size="14" font-family="Arial, sans-serif"
+        text-anchor="middle" fill="#555">Your Gateway to Careers</text>
+</svg>

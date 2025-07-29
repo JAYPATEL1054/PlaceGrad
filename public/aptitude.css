@@ -1,0 +1,96 @@
+body {
+    background-color: #ffffff; /* Changed from #121212 to white */
+    color: #000000; /* Changed text color for contrast */
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  
+  .header {
+    background-color: #0066cc; /* Or your preferred color */
+    color: white;              /* ✅ Makes all text inside white */
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .test-container {
+    padding: 30px;
+    max-width: 900px;
+    margin: auto;
+    background-color: #f9f9f9; /* Light background */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  
+  .section-title {
+    font-size: 1.5rem;
+    color: #222;
+    margin: 40px 0 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 5px;
+  }
+  
+  
+  .question-block {
+    margin-bottom: 25px;
+  }
+  
+  .question-block p {
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  
+  .question-block label {
+    display: block;
+    margin-left: 20px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  
+  input[type="radio"] {
+    margin-right: 10px;
+  }
+  
+  .submit-section {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .submit-section button {
+    background-color: #0066cc;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  
+  .submit-section button:hover {
+    background-color: #0080ff;
+  }
+  
+  .result-block {
+    margin-bottom: 20px;
+  }
+  
+  .result-block p {
+    margin: 5px 0;
+    font-size: 1rem;
+  }
+  .section-1,
+.section-2,
+.section-3,
+.section-4 {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+}

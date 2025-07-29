@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fefefe;
+    color: #222;
+  }
+  
+  .resume-header {
+    background-color: #004080;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  .resume-header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+  }
+  
+  .resume-header p {
+    margin-top: 10px;
+    font-size: 1.2rem;
+  }
+  
+  .tips-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  .resume-section {
+    background-color: #ffffff;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  
+  .resume-section h2 {
+    color: #004080;
+    margin-bottom: 15px;
+  }
+  
+  .resume-section ul {
+    list-style: disc inside;
+    padding-left: 10px;
+  }
+  
+  .resume-section ul li {
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  
+  .footer-info {
+    text-align: center;
+    padding: 20px;
+    background-color: #eee;
+    color: #444;
+    font-size: 0.9em;
+  }
+  

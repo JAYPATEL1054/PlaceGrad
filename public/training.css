@@ -1,0 +1,77 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f6f8;
+    color: #333;
+}
+
+.training-header {
+    background-color: #004080;
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.training-header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+.training-header p {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+.training-main {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 40px 20px;
+    gap: 20px;
+}
+
+.training-card {
+    background-color: white;
+    padding: 20px;
+    width: 280px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.training-card:hover {
+    transform: translateY(-5px);
+}
+
+.training-card h2 {
+    color: #004080;
+}
+
+.training-card p {
+    margin: 15px 0;
+}
+
+.training-card a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #004080;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.training-card a:hover {
+    background-color: #0066cc;
+}
+
+.footer-info {
+    text-align: center;
+    padding: 20px;
+    background-color: #ddd;
+    margin-top: 40px;
+    font-size: 0.9em;
+}
