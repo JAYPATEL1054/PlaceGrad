@@ -195,7 +195,7 @@ function redirectToDashboard(role) {
     if (role === 'admin') {
         window.location.href = '/admin-dashboard.html';
     } else {
-        window.location.href = '/dashboard.html';
+        window.location.href = '/home.html';
     }
 }
 
