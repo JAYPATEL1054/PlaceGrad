@@ -496,9 +496,17 @@
 
                 if (!this.tempToken) {
                     this.showError('Session expired. Please login again.');
+                    setTimeout(() => {
+                        const userRole = response.user?.role || 'student';
+                        if (userRole === 'admin') {
+                            window.location.href = '/admin-dashboard.html';
+                        } else {
+                            window.location.href = '/home.html';
+                        }
+                    }, 1500);
                     return;
                 }
-
+                
                 this.setLoading(true);
                 this.clearMessages();
 

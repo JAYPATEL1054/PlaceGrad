@@ -19,7 +19,13 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); // Increased limit for CSV uploads
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+// Disable caching for static files
+app.use(express.static(path.join(__dirname, 'public'), {
+    etag: false,
+    lastModified: false,
+    maxAge: 0,
+    cacheControl: false
+}));
 
 // Routes
 app.use('/api', routes);
