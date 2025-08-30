@@ -83,12 +83,12 @@
         
         <div class="dashboard-cards">
             <div class="card">
-                <h3 class="card-title">Placement Statistics</h3>
-                <div class="card-content">
-                    <p>Total Companies Visited: 45</p>
-                    <p>Students Placed: 120</p>
-                    <p>Highest Package: ₹18 LPA</p>
-                    <p>Average Package: ₹6.5 LPA</p>
+                <h3 class="card-title">Placement Statistics <button onclick="fetchPlacementStats()" style="float: right; padding: 5px 10px; cursor: pointer;">🔄 Refresh</button></h3>
+                <div class="card-content" id="placement-stats">
+                    <p>Total Companies Visited: <span id="companies-visited">Loading...</span></p>
+                    <p>Students Placed: <span id="students-placed">Loading...</span></p>
+                    <p>Highest Package: ₹<span id="highest-package">Loading...</span> LPA</p>
+                    <p>Average Package: ₹<span id="average-package">Loading...</span> LPA</p>
                 </div>
             </div>
             
@@ -116,8 +116,61 @@
     <!-- Include the user authentication script -->
     <script src="user-profile.js"></script>
     <script>
-        // Mobile menu toggle functionality
+        // Fetch and display placement statistics
+        async function fetchPlacementStats() {
+            // Add cache-busting parameter
+            const timestamp = new Date().getTime();
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                console.log('Fetching placement stats with token:', token);
+                const response = await fetch(`/api/placement-stats/current?t=${timestamp}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('API Response:', response);
+                const data = await response.json();
+                console.log('API Data:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch placement statistics');
+                }
+
+                if (data.success && data.stats) {
+                    document.getElementById('companies-visited').textContent = data.stats.totalCompaniesVisited || 'N/A';
+                    document.getElementById('students-placed').textContent = data.stats.studentsPlaced || 'N/A';
+                    document.getElementById('highest-package').textContent = data.stats.highestPackage || 'N/A';
+                    document.getElementById('average-package').textContent = data.stats.averagePackage || 'N/A';
+                } else {
+                    throw new Error('Invalid data format received from server');
+                }
+            } catch (error) {
+                console.error('Error fetching placement statistics:', error);
+                const errorMessage = error.message || 'Failed to load statistics';
+                
+                // Show error state in the UI with more informative message
+                const errorElements = ['companies-visited', 'students-placed', 'highest-package', 'average-package'];
+                errorElements.forEach(id => {
+                    document.getElementById(id).textContent = 'N/A';
+                });
+                
+                // You might want to show a toast or notification with the error message
+                alert('Failed to load placement statistics: ' + errorMessage);
+            }
+        }
+
+        // Initialize dashboard functionality
         document.addEventListener('DOMContentLoaded', function() {
+            // Fetch placement statistics
+            fetchPlacementStats();
+
+            // Mobile menu toggle functionality
             const menuToggle = document.getElementById('menu-toggle');
             const sidebar = document.getElementById('sidebar');
             

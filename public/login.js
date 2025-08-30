@@ -25,6 +25,18 @@ function initializeApp() {
     setupInputAnimations();
     setupPasswordToggle();
     setupRippleEffect();
+    loadSavedCredentials();
+}
+
+// Load saved credentials if 'Remember Me' was checked
+function loadSavedCredentials() {
+    const savedCredentials = localStorage.getItem('savedCredentials');
+    if (savedCredentials) {
+        const { username, password } = JSON.parse(savedCredentials);
+        usernameInput.value = username;
+        passwordInput.value = password;
+        rememberCheckbox.checked = true;
+    }
 }
 
 // Check if user is already authenticated
@@ -142,6 +154,17 @@ function validateInputs(username, password) {
 // Handle successful login response
 function handleLoginSuccess(data) {
     if (data.requiresOTP) {
+        // Save credentials if 'Remember Me' is checked
+        if (rememberCheckbox.checked) {
+            const credentials = {
+                username: usernameInput.value.trim(),
+                password: passwordInput.value.trim()
+            };
+            localStorage.setItem('savedCredentials', JSON.stringify(credentials));
+        } else {
+            localStorage.removeItem('savedCredentials');
+        }
+
         // OTP is required, redirect to OTP verification page
         showSuccessMessage(data.message || 'Login credentials verified. Please check your email for OTP.');
         
@@ -164,6 +187,17 @@ function handleLoginSuccess(data) {
         if (data.token) {
             localStorage.setItem('authToken', data.token);
             localStorage.setItem('userData', JSON.stringify(data.user));
+            
+            // Save credentials if 'Remember Me' is checked
+            if (rememberCheckbox.checked) {
+                const credentials = {
+                    username: usernameInput.value.trim(),
+                    password: passwordInput.value.trim()
+                };
+                localStorage.setItem('savedCredentials', JSON.stringify(credentials));
+            } else {
+                localStorage.removeItem('savedCredentials');
+            }
         }
         
         // Animate success
@@ -186,8 +220,11 @@ function handleLoginFailure(message) {
     // Shake the login card
     animateLoginFailure();
     
-    // Clear sensitive data
-    passwordInput.value = '';
+    // Clear sensitive data but maintain username if 'Remember Me' is checked
+    if (!rememberCheckbox.checked) {
+        passwordInput.value = '';
+        localStorage.removeItem('savedCredentials');
+    }
 }
 
 // Redirect to appropriate dashboard based on user role
@@ -195,7 +232,7 @@ function redirectToDashboard(role) {
     if (role === 'admin') {
         window.location.href = '/admin-dashboard.html';
     } else {
-        window.location.href = '/dashboard.html';
+        window.location.href = '/home.html';
     }
 }
 
