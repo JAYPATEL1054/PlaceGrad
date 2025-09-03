@@ -33,7 +33,27 @@ const userSchema = new mongoose.Schema({
         enrollmentNumber: String,
         department: String,
         semester: Number,
-        phone: String
+        phone: String,
+        // --- Academic fields ---
+        tenthPercentage: {
+            type: Number,
+            min: 0,
+            max: 100
+        },
+        tenthMarks: {
+            obtainedMarks: { type: Number, min: 0 },
+            totalMarks: { type: Number, min: 1 }
+        },
+        twelfthPercentage: {
+            type: Number,
+            min: 0,
+            max: 100
+        },
+        cgpa: {
+            type: Number,
+            min: 0,
+            max: 10
+        }
     },
     isActive: {
         type: Boolean,
@@ -43,23 +63,15 @@ const userSchema = new mongoose.Schema({
         type: Date
     },
     // OTP fields
-    otp: {
-        type: String
-    },
-    otpExpires: {
-        type: Date
-    },
+    otp: String,
+    otpExpires: Date,
     isEmailVerified: {
         type: Boolean,
         default: false
     },
     // Password reset fields
-    resetPasswordToken: {
-        type: String
-    },
-    resetPasswordExpires: {
-        type: Date
-    }
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 }, {
     timestamps: true
 });

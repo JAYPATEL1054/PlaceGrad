@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Language - PlaceGrad</title>
+    <link rel="stylesheet" href="training.css">
+    <style>
+        .language-selection-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .language-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .language-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .language-card h3 {
+            color: #004080;
+            margin-top: 0;
+        }
+
+        .language-card a {
+            text-decoration: none;
+            color: #004080;
+            font-weight: bold;
+        }
+        
+        /* New styles for the back button */
+        .language-header {
+            background-color: #004080;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative; /* Needed for positioning the back button */
+        }
+
+        .language-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .language-header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header class="language-header">
+        <a href="training.html" class="back-button">
+            &lt; Back
+        </a>
+        <h1>Select a Language</h1>
+        <p>Choose a programming language to view common interview questions.</p>
+    </header>
+
+    <main class="language-selection-container">
+        <div class="language-grid">
+            <div class="language-card">
+                <h3>Python</h3>
+                <a href="python-questions.html">View Questions</a>
+            </div>
+            <div class="language-card">
+                <h3>Java</h3>
+                <a href="java-questions.html">View Questions</a>
+            </div>
+            <div class="language-card">
+                <h3>C++</h3>
+                <a href="cpp-questions.html">View Questions</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-info">
+        <p>© 2025 LDRP Institute of Technology and Research</p>
+    </footer>
+</body>
+</html>

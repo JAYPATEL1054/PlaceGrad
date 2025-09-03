@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AptitudeHub - Review Answers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="aptitude.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <a href="aptitude.html" class="logo-link">
+                    <span class="logo-icon">&#129504;</span>
+                    <div class="logo-text-and-tagline">
+                        <span class="logo-text">AptitudeHub</span>
+                        <span class="tagline">Review Your Test Answers</span>
+                    </div>
+                </a>
+            </div>
+            <a href="performance.html" class="my-performance-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M16 11V3H8v8H2v10h20V11h-6zm-6-6h4v6h-4V5zm-6 8h4v6H4v-6zm16 6h-4v-6h4v6z"/>
+                </svg>
+                Performance Dashboard
+            </a>
+        </div>
+
+        <div class="review-content">
+            <div class="review-header">
+                <h1>Test Review</h1>
+                <div class="review-summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Questions:</span>
+                        <span class="summary-value" id="total-questions">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Correct Answers:</span>
+                        <span class="summary-value correct" id="correct-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Incorrect Answers:</span>
+                        <span class="summary-value incorrect" id="incorrect-count">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Score:</span>
+                        <span class="summary-value score" id="final-score">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-navigation">
+                <button id="prev-question-btn" class="nav-btn" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
+                        <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
+                    </svg>
+                    Previous
+                </button>
+                
+                <div class="question-counter">
+                    <span id="current-question">1</span> of <span id="total-question-display">0</span>
+                </div>
+                
+                <button id="next-question-btn" class="nav-btn">
+                    Next
+                    <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 -960 960 960" width="18" fill="currentColor">
+                        <path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="question-review-container">
+                <div class="question-card">
+                    <div class="question-header">
+                        <h3 id="question-text">Loading question...</h3>
+                        <div class="question-meta">
+                            <span class="category-badge" id="question-category">Category</span>
+                            <span class="question-number" id="question-number">Question 1</span>
+                        </div>
+                    </div>
+
+                    <div class="options-container" id="options-container">
+                        <!-- Options will be populated here -->
+                    </div>
+
+                    <div class="answer-explanation">
+                        <h4>Explanation</h4>
+                        <p id="explanation-text">Loading explanation...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-actions">
+                <button id="back-to-results-btn" class="action-btn secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                        <path d="M240-440h480v-80H240v80Zm0 160h480v-80H240v80ZM80-800v800h800V-800H80Zm80 640h640V-200H160v640Zm0-640h640v-80H160v-80Zm0 0v-80 80Z"/>
+                    </svg>
+                    Back to Results
+                </button>
+                <button id="new-test-btn" class="action-btn primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
+                        <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+                    </svg>
+                    Take New Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let reviewData = null;
+        let currentQuestionIndex = 0;
+        let totalQuestions = 0;
+
+        // DOM elements
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const explanationText = document.getElementById('explanation-text');
+        const questionCategory = document.getElementById('question-category');
+        const questionNumber = document.getElementById('question-number');
+        const currentQuestionSpan = document.getElementById('current-question');
+        const totalQuestionDisplay = document.getElementById('total-question-display');
+        const prevBtn = document.getElementById('prev-question-btn');
+        const nextBtn = document.getElementById('next-question-btn');
+        const totalQuestionsSpan = document.getElementById('total-questions');
+        const correctCountSpan = document.getElementById('correct-count');
+        const incorrectCountSpan = document.getElementById('incorrect-count');
+        const finalScoreSpan = document.getElementById('final-score');
+
+        // Load review data from localStorage
+        function loadReviewData() {
+            const savedData = localStorage.getItem('reviewData');
+            if (!savedData) {
+                showError('No review data found. Please complete a test first.');
+                return false;
+            }
+
+            try {
+                reviewData = JSON.parse(savedData);
+                if (!reviewData.questions || !reviewData.userAnswers) {
+                    showError('Invalid review data format.');
+                    return false;
+                }
+
+                totalQuestions = reviewData.questions.length;
+                currentQuestionIndex = 0;
+                
+                // Update summary information
+                updateSummary();
+                
+                // Display first question
+                displayQuestion();
+                
+                // Update navigation
+                updateNavigation();
+                
+                return true;
+            } catch (error) {
+                console.error('Error loading review data:', error);
+                showError('Error loading review data.');
+                return false;
+            }
+        }
+
+        // Update summary information
+        function updateSummary() {
+            let correctCount = 0;
+            let incorrectCount = 0;
+
+            reviewData.questions.forEach((question, index) => {
+                const userAnswer = reviewData.userAnswers[index];
+                if (userAnswer !== null && userAnswer === question.correctAnswerIndex) {
+                    correctCount++;
+                } else if (userAnswer !== null) {
+                    incorrectCount++;
+                }
+            });
+
+            const score = Math.round((correctCount / totalQuestions) * 100);
+
+            totalQuestionsSpan.textContent = totalQuestions;
+            correctCountSpan.textContent = correctCount;
+            incorrectCountSpan.textContent = incorrectCount;
+            finalScoreSpan.textContent = score + '%';
+            totalQuestionDisplay.textContent = totalQuestions;
+        }
+
+        // Display current question
+        function displayQuestion() {
+            if (!reviewData || currentQuestionIndex >= totalQuestions) return;
+
+            const question = reviewData.questions[currentQuestionIndex];
+            const userAnswer = reviewData.userAnswers[currentQuestionIndex];
+
+            // Update question text
+            questionText.textContent = question.questionText;
+            
+            // Update category and question number
+            questionCategory.textContent = question.category;
+            questionNumber.textContent = `Question ${currentQuestionIndex + 1}`;
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+
+            // Clear and populate options
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'review-option';
+                
+                let optionClass = 'option-default';
+                let statusText = '';
+                let statusIcon = '';
+
+                // Determine option styling based on correctness
+                if (index === question.correctAnswerIndex) {
+                    // This is the correct answer
+                    optionClass = 'option-correct';
+                    statusText = 'Correct Answer';
+                    statusIcon = '✓';
+                } else if (index === userAnswer && userAnswer !== question.correctAnswerIndex) {
+                    // This is the user's wrong answer
+                    optionClass = 'option-incorrect';
+                    statusText = 'Your Answer (Incorrect)';
+                    statusIcon = '✗';
+                } else if (index === userAnswer && userAnswer === question.correctAnswerIndex) {
+                    // This is the user's correct answer
+                    optionClass = 'option-correct';
+                    statusText = 'Your Answer (Correct)';
+                    statusIcon = '✓';
+                }
+
+                optionDiv.innerHTML = `
+                    <div class="option-content ${optionClass}">
+                        <span class="option-text">${option}</span>
+                        <div class="option-status">
+                            <span class="status-icon">${statusIcon}</span>
+                            <span class="status-text">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // Update explanation
+            explanationText.textContent = question.explanation || 'No explanation available for this question.';
+        }
+
+        // Update navigation buttons
+        function updateNavigation() {
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === totalQuestions - 1;
+        }
+
+        // Navigation functions
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+                updateNavigation();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < totalQuestions - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+                updateNavigation();
+            }
+        }
+
+        // Show error message
+        function showError(message) {
+            const reviewContent = document.querySelector('.review-content');
+            reviewContent.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon">⚠️</div>
+                    <h2>No Review Data Available</h2>
+                    <p>${message}</p>
+                    <div class="error-actions">
+                        <a href="aptitude.html" class="action-btn primary">Take a Test</a>
+                        <a href="performance.html" class="action-btn secondary">View Performance</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load review data
+            if (!loadReviewData()) {
+                return;
+            }
+
+            // Navigation button listeners
+            prevBtn.addEventListener('click', previousQuestion);
+            nextBtn.addEventListener('click', nextQuestion);
+
+            // Action button listeners
+            document.getElementById('back-to-results-btn').addEventListener('click', () => {
+                // Go back to test results if available, otherwise to performance dashboard
+                if (localStorage.getItem('currentTestResult')) {
+                    window.location.href = 'test.html';
+                } else {
+                    window.location.href = 'performance.html';
+                }
+            });
+
+            document.getElementById('new-test-btn').addEventListener('click', () => {
+                window.location.href = 'aptitude.html';
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+                    previousQuestion();
+                } else if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+                    nextQuestion();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -28,6 +28,25 @@ const updateProfile = async (req, res, next) => {
         const { profile } = req.body;
         const userId = req.user.userId;
 
+        if (!profile) {
+            return res.status(400).json({
+                success: false,
+                message: 'Profile data is required'
+            });
+        }
+
+        // Validate percentage if it's being updated
+        if (profile.tenthPercentage !== undefined) {
+            const percentage = parseFloat(profile.tenthPercentage);
+            if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid percentage value. Must be between 0 and 100'
+                });
+            }
+            profile.tenthPercentage = percentage;
+        }
+
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({
@@ -37,9 +56,7 @@ const updateProfile = async (req, res, next) => {
         }
 
         // Update profile fields
-        if (profile) {
-            user.profile = { ...user.profile, ...profile };
-        }
+        user.profile = { ...user.profile, ...profile };
 
         await user.save();
 
