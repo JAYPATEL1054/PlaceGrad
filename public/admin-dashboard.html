@@ -17,6 +17,66 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: white;
+            min-height: 100vh;
+            padding: 20px;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px 0;
+            border-bottom: 2px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu button {
+            width: 100%;
+            text-align: left;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            background: #f3f4f6;
+            color: #374151;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu button:hover {
+            background: #e5e7eb;
+            transform: translateX(5px);
+        }
+
+        .sidebar-menu button.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 300px;
+            padding: 20px;
         }
 
         .admin-container {
@@ -135,6 +195,14 @@
             transform: translateY(-2px);
         }
 
+        .btn-danger {
+            background: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
         .btn:disabled {
             background: #9ca3af;
             cursor: not-allowed;
@@ -192,6 +260,7 @@
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         .table-header {
@@ -334,7 +403,31 @@
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1 style="font-size: 24px; color: #1e3a8a;">
+                <i class="fas fa-user-shield"></i>
+                PlaceGrad Admin
+            </h1>
+        </div>
+        <ul class="sidebar-menu">
+            <li>
+                <button id="dashboardBtn" onclick="showSection('dashboard')" class="active">
+                    <i class="fas fa-user-plus"></i>
+                    Add User
+                </button>
+            </li>
+            <li>
+                <button id="addResultBtn" onclick="showSection('addResult')">
+                    <i class="fas fa-graduation-cap"></i>
+                    Add Academic Result
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="admin-container">
         <!-- Header -->
         <div class="header">
             <h1>
@@ -358,8 +451,8 @@
             <span id="errorMessage"></span>
         </div>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="dashboard-grid">
             <!-- Bulk Upload Users -->
             <div class="card">
                 <h2>
@@ -531,6 +624,145 @@
             </div>
         </div>
 
+        </div>
+
+        <!-- Add User Section -->
+        <div id="addUser" style="display: none;">
+            <!-- Bulk Upload Users -->
+            <div class="card" style="margin-bottom: 30px;">
+                <h2>
+                    <i class="fas fa-upload"></i>
+                    Bulk Upload Users
+                </h2>
+                
+                <div class="file-upload-area" onclick="document.getElementById('csvFile').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <strong>Click to upload CSV file</strong> or drag and drop
+                    </div>
+                    <div style="color: #9ca3af; font-size: 14px;">
+                        Maximum file size: 10MB
+                    </div>
+                </div>
+                
+                <input type="file" id="csvFile" accept=".csv" style="display: none;">
+                
+                <div id="fileInfo" class="file-info">
+                    <div id="fileName"></div>
+                    <div id="fileSize"></div>
+                </div>
+
+                <button id="uploadBtn" class="btn btn-success" style="margin-top: 15px; display: none;" onclick="uploadCSV()">
+                    <i class="fas fa-upload"></i>
+                    Upload CSV
+                </button>
+
+                <!-- CSV Template -->
+                <div class="csv-template">
+                    <h4>CSV Format Template:</h4>
+                    <code>Email,Name,Gender,10th board,10th Percentage,12th board,12th Percentage,Stream,Cpga,Internships(Y/N),Training(Y/N),Backlog in Past,Innovative Project(Y/N),Enrollment number</code>
+                    <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+                        • Required fields: Email, Name, Enrollment number<br>
+                        • Enrollment number will be used as the username<br>
+                        • First row should contain headers
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Single User -->
+            <div class="card">
+                <h2>
+                    <i class="fas fa-user-plus"></i>
+                    Add New User
+                </h2>
+                <form id="addUserForm">
+                    <!-- Existing add user form content -->
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Academic Result Section -->
+        <div id="addResult" style="display: none;">
+            <div class="card" style="margin-bottom: 30px;">
+                <h2>
+                    <i class="fas fa-graduation-cap"></i>
+                    Add Academic Result
+                </h2>
+                <form id="academicResultForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="username">Username *</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="resultType">Result Type *</label>
+                            <select id="resultType" name="resultType" required>
+                                <option value="">Select Result Type</option>
+                                <option value="tenth">10th Standard</option>
+                                <option value="twelfth">12th Standard</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="totalMarks">Total Marks *</label>
+                            <input type="number" id="totalMarks" name="totalMarks" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="obtainedMarks">Obtained Marks *</label>
+                            <input type="number" id="obtainedMarks" name="obtainedMarks" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="percentage">Percentage *</label>
+                            <input type="number" id="percentage" name="percentage" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">
+                        <i class="fas fa-plus"></i>
+                        Add Result
+                    </button>
+                </form>
+            </div>
+
+            <!-- Academic Results Table -->
+            <div class="users-table-container">
+                <div class="table-header">
+                    <h2>
+                        <i class="fas fa-graduation-cap"></i>
+                        Manage Academic Results
+                    </h2>
+                    <div class="form-group search-box">
+                        <input type="text" id="searchResults" placeholder="Search by username..." onkeyup="searchResults()">
+                    </div>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="users-table" id="resultsTable">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Result Type</th>
+                                <th>Total Marks</th>
+                                <th>Obtained Marks</th>
+                                <th>Percentage</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultsTableBody">
+                            <!-- Academic results will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- Users Table -->
         <div class="users-table-container">
             <div class="table-header">
@@ -571,6 +803,10 @@
             checkAdminAuth();
             loadUsers();
             setupFileUpload();
+            // Load academic results if we're on the addResult section
+            if (document.getElementById('addResult').style.display === 'block') {
+                loadAcademicResults();
+            }
         });
 
         function checkAdminAuth() {
@@ -872,6 +1108,71 @@
         }
 
         // Load and display users
+        // Show/Hide sections
+        function showSection(sectionId) {
+            const sections = ['dashboard', 'addUser', 'addResult'];
+            sections.forEach(section => {
+                const element = document.getElementById(section);
+                if (element) {
+                    element.style.display = section === sectionId ? 'block' : 'none';
+                }
+            });
+
+            // Update active button state
+            document.querySelectorAll('.sidebar-menu button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(sectionId + 'Btn').classList.add('active');
+
+            // Load data based on section
+            if (sectionId === 'addResult') {
+                loadAcademicResults();
+            }
+        }
+
+        // Handle academic result form submission
+        document.getElementById('academicResultForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultType = document.getElementById('resultType').value;
+            if (resultType !== 'tenth' && resultType !== 'twelfth') {
+                showAlert('error', 'Result type must be either tenth or twelfth');
+                return;
+            }
+
+            const formData = {
+                username: document.getElementById('username').value,
+                resultType: resultType,
+                totalMarks: parseFloat(document.getElementById('totalMarks').value),
+                obtainedMarks: parseFloat(document.getElementById('obtainedMarks').value),
+                percentage: parseFloat(document.getElementById('percentage').value),
+
+            };
+
+            try {
+                const response = await fetch('/api/academic-results', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', 'Academic result added successfully!');
+                    e.target.reset();
+                    loadAcademicResults(); // Reload the results table
+                } else {
+                    showAlert('error', result.message || 'Failed to add academic result');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        });
+
         async function loadUsers() {
             try {
                 const response = await fetch('/api/admin/users', {
@@ -886,6 +1187,89 @@
                 }
             } catch (error) {
                 console.error('Failed to load users:', error);
+            }
+        }
+
+        async function loadAcademicResults() {
+            try {
+                const response = await fetch('/api/academic-results', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    displayAcademicResults(result.data || []);
+                } else {
+                    const error = await response.json();
+                    showAlert('error', error.message || 'Failed to load academic results');
+                }
+            } catch (error) {
+                console.error('Failed to load academic results:', error);
+                showAlert('error', 'Server error while loading academic results');
+            }
+        }
+
+        function displayAcademicResults(results) {
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+
+            if (!results || results.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="5" style="text-align: center;">No academic results found</td>';
+                tbody.appendChild(row);
+                return;
+            }
+
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${result.username}</td>
+                    <td>${result.resultType}</td>
+                    <td>${result.totalMarks}</td>
+                    <td>${result.obtainedMarks}</td>
+                    <td>${result.percentage}%</td>
+                    <td>
+                        <button onclick="deleteAcademicResult('${result._id}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function searchResults() {
+            const searchTerm = document.getElementById('searchResults').value.toLowerCase();
+            const rows = document.querySelectorAll('#resultsTableBody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        async function deleteAcademicResult(resultId) {
+            if (!confirm('Are you sure you want to delete this academic result?')) return;
+
+            try {
+                const response = await fetch(`/api/academic-results/${resultId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    showAlert('success', 'Academic result deleted successfully');
+                    loadAcademicResults();
+                } else {
+                    const error = await response.json();
+                    showAlert('error', error.message || 'Failed to delete academic result');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
             }
         }
 

@@ -168,12 +168,12 @@ function setupProfileDropdown() {
         link.addEventListener('click', function(e) {
             const href = this.getAttribute('href');
             
-            if (href === '#' && this.textContent.includes('Logout')) {
+            if (href === 'login.html' && this.textContent.includes('Logout')) {
                 e.preventDefault();
                 handleLogout();
-            } else if (href === '#' && this.textContent.includes('My Resume')) {
+            } else if (href === 'myresume.html' && this.textContent.includes('My Resume')) {
                 e.preventDefault();
-                handleResumeClick();
+                handleResume();
             }
         });
     });
@@ -197,10 +197,9 @@ function redirectToLogin() {
     window.location.href = '/login.html';
 }
 
-// Handle resume click
-function handleResumeClick() {
-    // You can implement resume functionality here
-    alert('Resume functionality will be implemented soon!');
+// Handle resume
+function handleResume() {
+    window.location.href = '/myresume.html';
 }
 
 // Utility function to get current user data

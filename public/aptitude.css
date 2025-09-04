@@ -2761,3 +2761,38 @@ a, button, .option-label, .action-btn {
 .option-radio {
     margin-right: 10px;
 }
+
+/* Back button container */
+.back-btn {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  color: black;              /* black text */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect for the whole button */
+.back-btn:hover {
+  opacity: 1;
+  transform: translateX(-3px);
+}
+
+/* Icon inside the button */
+.back-btn i {
+  font-size: 1rem;
+  color: black;              /* black arrow */
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect for the icon */
+.back-btn:hover i {
+  transform: translateX(-4px);
+  color: #444;               /* slightly darker arrow on hover */
+}
