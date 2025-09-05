@@ -16,6 +16,11 @@ const errorHandler = require('./middleware/errorHandler');
 // Import models
 const AcademicResult = require('./models/AcademicResult');
 
+// Extra dependencies for resume analyzer proxy
+const fileUpload = require("express-fileupload");
+const axios = require("axios");
+const FormData = require("form-data");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -23,6 +28,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(fileUpload());
 
 // Disable caching for static files
 app.use(express.static(path.join(__dirname, 'public'), {
@@ -35,6 +41,27 @@ app.use(express.static(path.join(__dirname, 'public'), {
 // API Routes
 app.use('/api', routes);
 app.use('/api/academic-results', academicResultRoutes);
+
+// Resume Analyzer Proxy Route
+app.post("/api/analyze", async (req, res) => {
+    try {
+        if (!req.files || !req.files.resume) {
+            return res.status(400).json({ error: "No resume uploaded" });
+        }
+
+        const formData = new FormData();
+        formData.append("resume", req.files.resume.data, req.files.resume.name);
+
+        const response = await axios.post("http://127.0.0.1:5000/analyze", formData, {
+            headers: formData.getHeaders(),
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        console.error("Error forwarding resume:", error.message);
+        res.status(500).json({ error: "Resume analysis failed" });
+    }
+});
 
 // Legacy endpoint for backward compatibility (for old frontend code)
 app.post('/save_result', async (req, res) => {
@@ -140,6 +167,11 @@ app.get('/companies', (req, res) => {
 });
 app.get('/add-companies', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'add-companies.html'));
+});
+
+// Serve My Resume page
+app.get('/myresume', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'myresume.html'));
 });
 
 // Health check endpoint
