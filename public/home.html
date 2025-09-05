@@ -4,7 +4,450 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PlaceGrad - Home</title>
-    <link rel="stylesheet" href="home.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            color: #fff;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tp-bgimg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+            background-repeat: no-repeat;
+            background-image: url('https://www.ldrp.ac.in/wp-content/uploads/LDRP-Optimized.png');
+            background-size: cover;
+            background-position: center center;
+            z-index: -1;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .logo-container-top {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .top-logo {
+            height: 60px;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+        }
+
+        .main-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav a:hover {
+            color: #00c3ff;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-logo-section {
+            margin-top: -1rem;
+            margin-bottom: 0.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-logo-svg {
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.3));
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            padding: 5px;
+            backdrop-filter: blur(3px);
+        }
+
+        .portal-title-section {
+            margin-bottom: 2rem;
+        }
+
+        .portal-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #00c3ff, #0080ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(0, 195, 255, 0.3);
+        }
+
+        .portal-description {
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .footer-info {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.9rem;
+            background-color: rgba(0,0,0,0.7);
+            margin-top: auto;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-links {
+            margin-top: 0.5rem;
+        }
+
+        .footer-link {
+            color: #ccc;
+            margin: 0 0.5rem;
+            text-decoration: none;
+        }
+
+        .footer-link:hover {
+            color: #00c3ff;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(0, 195, 255, 0.1), rgba(0, 128, 255, 0.1));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Chatbot Styles */
+        #chatbot-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #0066cc, #0080ff);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        #chatbot-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+        }
+
+        #chatbot-box {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 380px;
+            max-width: 90vw;
+            background-color: white;
+            color: black;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            overflow: hidden;
+            flex-direction: column;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        #chatbot-header {
+            background: linear-gradient(45deg, #0066cc, #0080ff);
+            color: white;
+            padding: 15px 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chatbot-header .chatbot-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        #clear-chat {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 14px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: background-color 0.2s;
+        }
+
+        #clear-chat:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #chatbot-close {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 4px 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        #chatbot-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        #chatbot-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #chatbot-messages {
+            height: 350px;
+            overflow-y: auto;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message {
+            align-items: flex-end;
+        }
+
+        .bot-message {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            white-space: pre-line;
+        }
+
+        .user-message .message-bubble {
+            background: linear-gradient(45deg, #0066cc, #0080ff);
+            color: white;
+        }
+
+        .bot-message .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e5e9;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+            align-self: flex-end;
+        }
+
+        #chatbot-input {
+            display: flex;
+            border-top: 1px solid #e1e5e9;
+            padding: 15px 20px;
+            gap: 10px;
+            background: white;
+        }
+
+        #user-input {
+            flex: 1;
+            resize: none;
+            font-size: 14px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s ease;
+            max-height: 100px;
+            min-height: 40px;
+        }
+
+        #user-input:focus {
+            border-color: #0066cc;
+        }
+
+        #send-btn {
+            background: linear-gradient(45deg, #0066cc, #0080ff);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 70px;
+        }
+
+        #send-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+        }
+
+        #send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: none;
+            color: #666;
+            font-style: italic;
+            padding: 10px 16px;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #ffe6e6;
+            color: #d63031;
+            border: 1px solid #fab1a0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-logo-svg {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .portal-title {
+                font-size: 2.5rem;
+            }
+            
+            .portal-description {
+                font-size: 1rem;
+                padding: 0 1rem;
+            }
+            
+            .top-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .main-nav ul {
+                justify-content: center;
+            }
+
+            #chatbot-box {
+                width: 95vw;
+                right: 2.5vw;
+            }
+
+            #chatbot-toggle {
+                bottom: 15px;
+                right: 15px;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Background Image -->
@@ -87,51 +530,178 @@
     
     <!-- Chatbot Box -->
     <div id="chatbot-box">
-        <div id="chatbot-header">PlaceGrad Assistant <span id="chatbot-close" onclick="toggleChatbot()">×</span></div>
+        <div id="chatbot-header">
+            PlaceGrad Assistant 
+            <span id="chatbot-close" onclick="toggleChatbot()">×</span>
+        </div>
         <div id="chatbot-messages"></div>
+        <div class="typing-indicator" id="typing-indicator">Bot is typing...</div>
         <div id="chatbot-input">
-            <textarea id="user-input" placeholder="Ask about placements, interviews..." rows="1"></textarea>
-            <button onclick="sendMessage()">Send</button>
+            <textarea id="user-input" placeholder="Ask about placements, companies, interviews..." rows="1"></textarea>
+            <button id="send-btn" onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
+        // Chatbot functionality with Flask backend integration
+        let isTyping = false;
+
         function toggleChatbot() {
             const bot = document.getElementById('chatbot-box');
-            bot.style.display = (bot.style.display === 'none' || bot.style.display === '') ? 'flex' : 'none';
-        }
-        
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const message = input.value.trim();
-            const messagesDiv = document.getElementById('chatbot-messages');
-        
-            if (message) {
-                messagesDiv.innerHTML += `<div><strong>You:</strong> ${message}</div>`;
-                const botResponse = getBotResponse(message);
-                setTimeout(() => {
-                    messagesDiv.innerHTML += `<div><strong>Bot:</strong> ${botResponse}</div>`;
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                }, 500);
-                input.value = '';
+            const isVisible = bot.style.display === 'flex';
+            bot.style.display = isVisible ? 'none' : 'flex';
+            
+            if (!isVisible) {
+                document.getElementById('user-input').focus();
+                // Load chat history when opening
+                loadChatHistory();
             }
         }
-        
-        function getBotResponse(msg) {
-            msg = msg.toLowerCase();
-        
-            if (msg.includes("interview")) return "We suggest preparing HR + technical questions listed in Training Materials.";
-            if (msg.includes("resume")) return "Ensure your resume is 1 page, clean and ATS-friendly.";
-            if (msg.includes("aptitude")) return "Check out the Aptitude Test under Training Materials.";
-            if (msg.includes("company") || msg.includes("companies")) return "Go to the Companies section to explore upcoming drives.";
-            if (msg.includes("hello") || msg.includes("hi")) return "Hello! How can I help you today?";
-            
-            return "I'm here to help with placement, aptitude, and resume tips!";
+
+        function formatTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         }
 
-        document.getElementById("user-input").addEventListener("input", function () {
-            this.style.height = "auto";
-            this.style.height = this.scrollHeight + "px";
+        function addMessage(content, isUser = false, isError = false) {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = `message-bubble ${isError ? 'error-message' : ''}`;
+            bubbleDiv.textContent = content;
+            
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = formatTime();
+            
+            messageDiv.appendChild(bubbleDiv);
+            messageDiv.appendChild(timeDiv);
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            indicator.classList.add('show');
+            const messagesDiv = document.getElementById('chatbot-messages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            indicator.classList.remove('show');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const message = input.value.trim();
+
+            if (!message || isTyping) return;
+
+            // Disable input and show user message
+            isTyping = true;
+            sendBtn.disabled = true;
+            addMessage(message, true);
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            try {
+                // Send to Flask backend
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                // Hide typing indicator and show response
+                hideTypingIndicator();
+                addMessage(data.reply || 'Sorry, I didn\'t understand that.');
+
+            } catch (error) {
+                console.error('Chat error:', error);
+                hideTypingIndicator();
+                addMessage('Sorry, I\'m having trouble connecting. Please try again later.', false, true);
+            } finally {
+                isTyping = false;
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('/history');
+                if (response.ok) {
+                    const history = await response.json();
+                    const messagesDiv = document.getElementById('chatbot-messages');
+                    messagesDiv.innerHTML = '';
+
+                    if (history.length === 0) {
+                        addWelcomeMessage();
+                    } else {
+                        // Load existing conversation
+                        history.forEach(item => {
+                            addMessage(item.user, true);
+                            addMessage(item.bot);
+                        });
+                    }
+                } else {
+                    // Flask backend not available, show welcome message
+                    addWelcomeMessage();
+                }
+            } catch (error) {
+                console.warn('Chat history not available, using standalone mode:', error);
+                addWelcomeMessage();
+            }
+        }
+
+        function addWelcomeMessage() {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            messagesDiv.innerHTML = '';
+            addMessage('Hello! I\'m your PlaceGrad assistant. I can help you with:\n\n• Company information (Synoptek, OpenXcell, eInfochips, etc.)\n• Interview preparation tips\n• Resume guidance\n• Placement process information\n• Technical preparation\n\nWhat would you like to know?');
+        }
+
+        async function clearChat() {
+            try {
+                await fetch('/clear', { method: 'POST' });
+                document.getElementById('chatbot-messages').innerHTML = '';
+                addMessage('Chat history cleared. How can I help you?');
+            } catch (error) {
+                console.error('Error clearing chat:', error);
+            }
+        }
+
+        // Auto-resize textarea
+        document.getElementById('user-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        // Enter to send (Shift+Enter for new line)
+        document.getElementById('user-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PlaceGrad chatbot initialized with Flask backend');
         });
     </script>
 </body>
