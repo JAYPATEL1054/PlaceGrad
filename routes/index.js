@@ -4,6 +4,7 @@ const adminRoutes = require('./admin');
 const userRoutes = require('./user');
 const companyRoutes = require('./company');
 const placementStatsRoutes = require('./placementStats');
+const upcomingEventsRoutes = require('./upcomingEvents');
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.use('/admin', adminRoutes);
 router.use('/user', userRoutes);
 router.use('/companies', companyRoutes);
 router.use('/placement-stats', placementStatsRoutes);
+router.use('/upcoming-events', upcomingEventsRoutes);
 
 // API info endpoint
 router.get('/', (req, res) => {
@@ -25,7 +27,8 @@ router.get('/', (req, res) => {
             admin: '/api/admin',
             user: '/api/user',
             companies: '/api/companies',
-            placementStats: '/api/placement-stats'
+            placementStats: '/api/placement-stats',
+            upcomingEvents: '/api/upcoming-events'
         },
         documentation: 'Contact admin for API documentation'
     });

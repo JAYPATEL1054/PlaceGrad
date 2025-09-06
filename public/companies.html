@@ -569,11 +569,25 @@
             const tenthPercentage = parseFloat(profile.tenthPercentage) || 0;
             const twelfthPercentage = parseFloat(profile.twelfthPercentage) || 0;
             
+            console.log('Checking eligibility for:', {
+                companyName,
+                enrollmentNumber,
+                tenthPercentage,
+                twelfthPercentage,
+                userData
+            });
+            
             // Check if there are specific requirements for this enrollment number
             if (enrollmentNumber && enrollmentRequirements[enrollmentNumber]) {
                 const requirements = enrollmentRequirements[enrollmentNumber];
-                return tenthPercentage >= requirements.tenthPercentage && 
-                       twelfthPercentage >= requirements.twelfthPercentage;
+                const isEligible = tenthPercentage >= requirements.tenthPercentage && 
+                                  twelfthPercentage >= requirements.twelfthPercentage;
+                console.log('Enrollment-specific eligibility check:', {
+                    enrollmentNumber,
+                    requirements,
+                    isEligible
+                });
+                return isEligible;
             }
             
             // If no specific requirements, use company-specific requirement or default to 60%
@@ -624,12 +638,23 @@
         
         // Function to update apply buttons based on eligibility
         function updateApplyButtons() {
+            console.log('Updating apply buttons...');
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            console.log('Current userData:', userData);
+            
             const applyButtons = document.querySelectorAll('.apply-btn');
+            console.log('Found apply buttons:', applyButtons.length);
             
             applyButtons.forEach(button => {
                 const companyName = button.getAttribute('onclick').match(/'([^']+)'/)[1];
                 const isEligible = checkEligibility(companyName);
                 const requiredPercentage = companyRequirements[companyName.toLowerCase()] || 60;
+                
+                console.log('Button update for company:', {
+                    companyName,
+                    isEligible,
+                    requiredPercentage
+                });
                 
                 if (!isEligible) {
                     button.classList.add('disabled');
@@ -729,9 +754,19 @@
             }
         });
         
-        // Load companies when the page loads
+        // Load companies and initialize page when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM Content Loaded - Initializing page');
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            console.log('Initial userData from localStorage:', userData);
             loadCompanies();
+            updateApplyButtons();
+        });
+
+        // Listen for profile updates
+        window.addEventListener('userProfileUpdated', () => {
+            console.log('Profile update event received');
+            updateApplyButtons();
         });
     </script>
 </body>

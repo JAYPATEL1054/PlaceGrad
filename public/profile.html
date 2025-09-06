@@ -225,6 +225,12 @@
         function displayProfileData(user) {
             debugLog('Displaying profile data for user:', user.username);
             
+            // Update userData in localStorage
+            localStorage.setItem('userData', JSON.stringify({
+                profile: user
+            }));
+            debugLog('Updated userData in localStorage:', JSON.parse(localStorage.getItem('userData')));
+            
             const profile = user.profile || {};
             let html = `
                 <div class="profile-section">

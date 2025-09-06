@@ -9,11 +9,58 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from collections import Counter
 import logging
 import os
+import openai
+
+# OpenAI API setup
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+def get_simple_fallback(msg):
+    """Enhanced fallback for general questions"""
+    msg_lower = msg.lower()
+    
+    # General knowledge questions
+    if any(word in msg_lower for word in ["what is", "define", "explain", "meaning of", "tell me about"]):
+        return "I'd be happy to explain that! However, I'm specialized in placement and career guidance. For the most accurate and detailed information, I'd recommend checking reliable sources or asking a more specific question about placements, interviews, or career development."
+    
+    # How-to questions
+    if any(word in msg_lower for word in ["how to", "how do", "how can", "how should"]):
+        return "That's a great question! While I can help with placement and career-related 'how-to' questions, for other topics I'd suggest consulting specialized resources or asking me something more specific about job preparation, interview skills, or career guidance."
+    
+    # Why questions
+    if any(word in msg_lower for word in ["why", "why is", "why do", "why should"]):
+        return "Interesting question! I'm best equipped to answer 'why' questions related to placements, career choices, and professional development. Feel free to ask me about why certain interview techniques work, why specific skills are important for placements, or other career-related topics!"
+    
+    # When questions
+    if any(word in msg_lower for word in ["when", "when is", "when do", "when should"]):
+        return "I can help with timing questions related to placements, interview preparation, and career planning. For other topics, I'd recommend checking specific resources or asking me about placement timelines, interview schedules, or career milestones!"
+    
+    # Where questions
+    if any(word in msg_lower for word in ["where", "where is", "where can", "where do"]):
+        return "I can help with location-related questions about placements, companies, and career opportunities. For other topics, I'd suggest checking relevant sources or asking me about where to find placement opportunities, company locations, or career resources!"
+    
+    # Who questions
+    if any(word in msg_lower for word in ["who", "who is", "who are", "who can"]):
+        return "I can help with questions about people in the context of placements, companies, and career guidance. For other topics, I'd recommend checking reliable sources or asking me about who to contact for placements, company representatives, or career mentors!"
+    
+    # General conversation starters
+    if any(word in msg_lower for word in ["tell me", "can you", "do you know", "help me understand"]):
+        return "I'd love to help! I'm specialized in placement and career guidance topics. I can help you with interview preparation, company information, resume tips, technical skills, and career planning. What would you like to know about placements or career development?"
+    
+    # Try OpenAI API as final fallback
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": f"You are a helpful placement and career guidance assistant. The user asked: '{msg}'. Please provide a helpful response, but if it's not related to placements, careers, or professional development, gently redirect them to ask about placement-related topics."}]
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        logger.error(f"OpenAI API error: {str(e)}")
+        return "I'm here to help with placements and career guidance! I can assist with interview preparation, company information, resume tips, technical skills, and career planning. What would you like to know about placements or professional development?"
 
 # ---------------------------
 # Setup Flask
 # ---------------------------
-app = Flask(__name__, static_folder="public", static_url_path="")
+app = Flask(__name__, static_folder="public", static_url_path="/")
 app.secret_key = "supersecret"   # for chatbot sessions
 CORS(app)  # Enable CORS
 
@@ -38,10 +85,29 @@ except LookupError:
 # ====================================================
 def get_bot_response(msg):
     msg = msg.lower()
+    msg_lower = msg  # For consistency with the enhanced fallback function
 
-    # Greetings
+    # General greetings and questions
     if "hello" in msg or "hi" in msg or "hey" in msg:
         return "Hello! How can I help you — with interviews, placements, resume tips, technical prep, or company details?"
+    
+    if "how are you" in msg or "how r u" in msg:
+        return "I'm doing great, thank you for asking! I'm here to help you with placements, interviews, and career guidance. How can I assist you today?"
+    
+    if "what is your name" in msg or "who are you" in msg or "tell me your name" in msg or "your name" in msg:
+        return "I'm PlaceGrad Bot, your placement and career guidance assistant! I can help with interview prep, company info, and placement tips."
+    
+    if "thank you" in msg or "thanks" in msg:
+        return "You're welcome! Feel free to ask me anything about placements, interviews, or career guidance anytime."
+    
+    if "good morning" in msg:
+        return "Good morning! Ready to ace your placements today? How can I help you?"
+    
+    if "good evening" in msg or "good afternoon" in msg:
+        return "Good evening! Hope you're having a productive day. What can I help you with?"
+    
+    if "bye" in msg or "goodbye" in msg:
+        return "Goodbye! Best of luck with your placements. Come back anytime you need help!"
 
     # Detailed Company Information
     if "synoptek" in msg:
@@ -161,49 +227,98 @@ def get_bot_response(msg):
     if "company research" in msg:
         return "Before an interview, research company profile, recent projects, values, and competitors."
 
-    if "mock test" in msg:
-        return "Take mock aptitude tests and coding challenges on platforms like HackerRank, LeetCode, and GeeksforGeeks."
+    if "mock test" in msg or "practice test" in msg:
+        return "Take mock tests regularly to improve speed and accuracy. Focus on weak areas and time management."
 
-    if "placement preparation timeline" in msg:
-        return "Start 6 months before placements: 3 months aptitude + coding, 2 months projects & resume, 1 month mock interviews."
+    # Resume and Skills
+    if "resume" in msg and "tips" in msg:
+        return "Resume Tips: Keep it 1-2 pages, use action verbs, quantify achievements, tailor for each job, proofread carefully."
 
-    if "resume screening" in msg:
-        return "Many companies filter candidates through ATS. Use keywords from job description and keep resume concise."
+    if "skills" in msg and ("improve" in msg or "develop" in msg):
+        return "Focus on: Technical skills (coding, tools), Soft skills (communication, teamwork), Industry knowledge, Certifications."
 
-    if "skills required" in msg:
-        return "Key skills: Coding (C/C++/Java/Python), Problem Solving, DBMS, OS, OOPs, Communication, and Teamwork."
+    # General career questions
+    if "career" in msg or "job" in msg:
+        return "Career guidance: Identify your interests, build relevant skills, network actively, gain experience through internships."
 
-    # Resume-related queries
-    if "resume tips" in msg:
-        return "Resume should be concise, 1 page ideally, highlight internships/projects, use clean format."
+    if "salary" in msg or "package" in msg:
+        return "Salary depends on company, role, location, and your skills. Focus on learning first, money will follow."
 
-    if "how to make resume" in msg or "build resume" in msg:
-        return "Tools like Canva, Zety, or Overleaf help. Focus on achievements, not just responsibilities."
+    if "programming" in msg or "coding" in msg:
+        return "Programming Tips: Start with basics, practice daily, solve problems on HackerRank/LeetCode, build projects."
 
-    # Internship-related queries
-    if "internships" in msg or "internship tips" in msg:
-        return "Internships provide real-world experience. Apply early, tailor your resume, and prepare for interviews."
+    # Study and preparation
+    if "study" in msg or "preparation" in msg:
+        return "Study Plan: Set daily goals, use active learning, take breaks, practice mock tests, revise regularly."
 
-    if "where to find internships" in msg:
-        return "Find internships on LinkedIn, Internshala, AngelList, and company career pages."
+    if "time management" in msg:
+        return "Time Management: Prioritize tasks, use calendars, avoid distractions, take breaks, maintain work-life balance."
 
-    if "how to apply for internships" in msg:
-        return "Tailor your resume and cover letter for each application. Follow up politely after applying."
+    # General life questions
+    if "motivation" in msg or "inspire" in msg:
+        return "Stay motivated: Set clear goals, celebrate small wins, learn from failures, surround yourself with positive people."
 
-    # Soft skills
-    if "soft skills" in msg:
-        return "Improve communication, teamwork, time management. Join speaking clubs or do mock sessions."
+    if "stress" in msg or "pressure" in msg:
+        return "Managing stress: Take deep breaths, exercise regularly, talk to friends, maintain perspective, seek help when needed."
 
-    # CGPA queries
-    if "cgpa" in msg:
-        return "CGPA matters, but it's not everything. Focus on real-world skills and projects too."
+    # Technology questions
+    if "technology" in msg or "tech" in msg:
+        return "Tech Trends: AI/ML, Cloud Computing, Cybersecurity, Data Science, Mobile Development are in high demand."
 
-    # Project queries
-    if "projects" in msg:
-        return "Projects prove your practical skills. Host them on GitHub, write documentation, and demo links."
+    if "future" in msg:
+        return "Future Planning: Stay updated with trends, keep learning, build a strong network, be adaptable to change."
 
-    # General fallback
-    return "I'm not sure I understood that. Try asking about 'resume tips', 'interview tips', 'placement process', or specific company names like 'Synoptek' or 'OpenXcell'."
+    # General knowledge and educational questions
+    if any(word in msg_lower for word in ["what is", "define", "explain", "meaning of"]):
+        return "I'd be happy to explain that! However, I'm specialized in placement and career guidance. For the most accurate information, I'd recommend checking reliable sources or asking me something more specific about placements, interviews, or career development."
+
+    # How-to questions (general)
+    if any(word in msg_lower for word in ["how to", "how do", "how can", "how should"]):
+        return "That's a great question! While I can help with placement and career-related 'how-to' questions, for other topics I'd suggest consulting specialized resources or asking me something more specific about job preparation, interview skills, or career guidance."
+
+    # Why questions (general)
+    if any(word in msg_lower for word in ["why", "why is", "why do", "why should"]):
+        return "Interesting question! I'm best equipped to answer 'why' questions related to placements, career choices, and professional development. Feel free to ask me about why certain interview techniques work, why specific skills are important for placements, or other career-related topics!"
+
+    # When questions (general)
+    if any(word in msg_lower for word in ["when", "when is", "when do", "when should"]):
+        return "I can help with timing questions related to placements, interview preparation, and career planning. For other topics, I'd recommend checking specific resources or asking me about placement timelines, interview schedules, or career milestones!"
+
+    # Where questions (general)
+    if any(word in msg_lower for word in ["where", "where is", "where can", "where do"]):
+        return "I can help with location-related questions about placements, companies, and career opportunities. For other topics, I'd suggest checking relevant sources or asking me about where to find placement opportunities, company locations, or career resources!"
+
+    # Who questions (general)
+    if any(word in msg_lower for word in ["who", "who is", "who are", "who can"]):
+        return "I can help with questions about people in the context of placements, companies, and career guidance. For other topics, I'd recommend checking reliable sources or asking me about who to contact for placements, company representatives, or career mentors!"
+
+    # General conversation and help
+    if any(word in msg_lower for word in ["help", "assist", "support", "guide"]):
+        return "I'm here to help with placements and career guidance! I can assist with interview preparation, company information, resume tips, technical skills, and career planning. What specific area would you like help with?"
+
+    # Questions about capabilities
+    if any(word in msg_lower for word in ["can you", "do you know", "are you able", "what can you"]):
+        return "I can help with placement and career-related topics including: interview preparation, company information, resume analysis, technical skills guidance, placement process, and career planning. What would you like to know about?"
+
+    # General advice requests
+    if any(word in msg_lower for word in ["advice", "suggestion", "recommendation", "tip"]):
+        return "I'd be happy to provide advice! I specialize in placement and career guidance. I can offer tips on interviews, resume building, skill development, company selection, and career planning. What specific advice are you looking for?"
+
+    # Questions about learning and education
+    if any(word in msg_lower for word in ["learn", "study", "education", "course", "training"]):
+        return "Great question about learning! I can help with career-focused learning advice, skill development for placements, and educational guidance for professional growth. What would you like to learn about for your career development?"
+
+    # Questions about problems and challenges
+    if any(word in msg_lower for word in ["problem", "issue", "challenge", "difficulty", "struggle"]):
+        return "I understand you're facing challenges! I can help with placement and career-related problems. Whether it's interview anxiety, skill gaps, resume issues, or career decisions, I'm here to help. What specific challenge are you facing?"
+
+    # Questions about goals and aspirations
+    if any(word in msg_lower for word in ["goal", "dream", "aspiration", "want to be", "become"]):
+        return "That's wonderful that you have goals! I can help you achieve career and placement goals. Whether it's getting into a specific company, developing certain skills, or advancing in your career, I can provide guidance. What are your career goals?"
+
+    # If no specific rule matches, use enhanced fallback
+    return get_simple_fallback(msg)
+
 
 # Chatbot routes
 @app.route("/chat", methods=["POST"])
@@ -237,6 +352,8 @@ def history():
 def clear():
     session.pop("conversation", None)
     return jsonify({"status": "cleared"})
+
+
 
 
 # ====================================================

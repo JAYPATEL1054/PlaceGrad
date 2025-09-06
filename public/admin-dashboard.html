@@ -385,6 +385,24 @@
             color: #374151;
         }
 
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-badge.active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
         @media (max-width: 768px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
@@ -421,6 +439,12 @@
                 <button id="addResultBtn" onclick="showSection('addResult')">
                     <i class="fas fa-graduation-cap"></i>
                     Add Academic Result
+                </button>
+            </li>
+            <li>
+                <button id="placementStatsBtn" onclick="showSection('placementStats')">
+                    <i class="fas fa-chart-line"></i>
+                    Placement Statistics
                 </button>
             </li>
         </ul>
@@ -757,6 +781,89 @@
                         </thead>
                         <tbody id="resultsTableBody">
                             <!-- Academic results will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placement Statistics Section -->
+        <div id="placementStats" class="dashboard-grid" style="display: none;">
+            <div class="card">
+                <h2>
+                    <i class="fas fa-chart-line"></i>
+                    Add/Update Placement Statistics
+                </h2>
+                
+                <form id="placementStatsForm" onsubmit="submitPlacementStats(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="academicYear">Academic Year</label>
+                            <input type="text" id="academicYear" name="academicYear" 
+                                   placeholder="e.g., 2024-2025" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="totalCompaniesVisited">Total Companies Visited</label>
+                            <input type="number" id="totalCompaniesVisited" name="totalCompaniesVisited" 
+                                   min="0" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="studentsPlaced">Students Placed</label>
+                            <input type="number" id="studentsPlaced" name="studentsPlaced" 
+                                   min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="highestPackage">Highest Package (LPA)</label>
+                            <input type="number" id="highestPackage" name="highestPackage" 
+                                   min="0" step="0.1" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="averagePackage">Average Package (LPA)</label>
+                            <input type="number" id="averagePackage" name="averagePackage" 
+                                   min="0" step="0.1" required>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save Statistics
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Existing Placement Statistics -->
+            <div class="card">
+                <h2>
+                    <i class="fas fa-list"></i>
+                    Existing Placement Statistics
+                    <button onclick="loadPlacementStats()" class="btn btn-secondary" style="float: right;">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </h2>
+                
+                <div style="overflow-x: auto;">
+                    <table class="users-table" id="placementStatsTable">
+                        <thead>
+                            <tr>
+                                <th>Academic Year</th>
+                                <th>Companies Visited</th>
+                                <th>Students Placed</th>
+                                <th>Highest Package (LPA)</th>
+                                <th>Average Package (LPA)</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="placementStatsTableBody">
+                            <!-- Placement statistics will be loaded here -->
                         </tbody>
                     </table>
                 </div>
@@ -1110,7 +1217,7 @@
         // Load and display users
         // Show/Hide sections
         function showSection(sectionId) {
-            const sections = ['dashboard', 'addUser', 'addResult'];
+            const sections = ['dashboard', 'addUser', 'addResult', 'placementStats'];
             sections.forEach(section => {
                 const element = document.getElementById(section);
                 if (element) {
@@ -1127,6 +1234,12 @@
             // Load data based on section
             if (sectionId === 'addResult') {
                 loadAcademicResults();
+            } else if (sectionId === 'placementStats') {
+                loadPlacementStats();
+                setCurrentAcademicYear();
+                exitEditMode(); // Reset edit mode when switching to placement stats section
+            } else {
+                exitEditMode(); // Reset edit mode when switching to other sections
             }
         }
 
@@ -1321,6 +1434,438 @@
                     loadUsers();
                 } else {
                     showAlert('error', 'Failed to update user status');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        // Placement Statistics Functions
+        let isEditMode = false;
+        let editingAcademicYear = null;
+
+        async function submitPlacementStats(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                academicYear: formData.get('academicYear'),
+                totalCompaniesVisited: parseInt(formData.get('totalCompaniesVisited')),
+                studentsPlaced: parseInt(formData.get('studentsPlaced')),
+                highestPackage: parseFloat(formData.get('highestPackage')),
+                averagePackage: parseFloat(formData.get('averagePackage'))
+            };
+
+            try {
+                let response;
+                if (isEditMode && editingAcademicYear) {
+                    // Update existing entry
+                    response = await fetch(`/api/placement-stats/${editingAcademicYear}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // Create new entry
+                    response = await fetch('/api/placement-stats', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message || 'Placement statistics saved successfully');
+                    document.getElementById('placementStatsForm').reset();
+                    loadPlacementStats();
+                    exitEditMode();
+                } else {
+                    showAlert('error', result.message || 'Failed to save placement statistics');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        async function loadPlacementStats() {
+            try {
+                const response = await fetch('/api/placement-stats/all', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    displayPlacementStats(result.stats);
+                } else {
+                    showAlert('error', 'Failed to load placement statistics');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        function setCurrentAcademicYear() {
+            const currentYear = new Date().getFullYear();
+            const academicYear = `${currentYear}-${currentYear + 1}`;
+            document.getElementById('academicYear').value = academicYear;
+        }
+
+        function displayPlacementStats(stats) {
+            const tbody = document.getElementById('placementStatsTableBody');
+            tbody.innerHTML = '';
+
+            if (!stats || stats.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7" style="text-align: center;">No placement statistics found</td>';
+                tbody.appendChild(row);
+                return;
+            }
+
+            stats.forEach(stat => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${stat.academicYear}</td>
+                    <td>${stat.totalCompaniesVisited}</td>
+                    <td>${stat.studentsPlaced}</td>
+                    <td>₹${stat.highestPackage} LPA</td>
+                    <td>₹${stat.averagePackage} LPA</td>
+                    <td>${new Date(stat.updatedAt).toLocaleDateString()}</td>
+                    <td>
+                        <button onclick="editPlacementStats('${stat.academicYear}')" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;">
+                            Edit
+                        </button>
+                        <button onclick="deletePlacementStats('${stat.academicYear}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editPlacementStats(academicYear) {
+            // Find the stats for this academic year
+            const stats = Array.from(document.querySelectorAll('#placementStatsTableBody tr')).find(row => 
+                row.cells[0].textContent === academicYear
+            );
+            
+            if (stats) {
+                // Set edit mode
+                isEditMode = true;
+                editingAcademicYear = academicYear;
+                
+                // Populate the form with existing data
+                document.getElementById('academicYear').value = stats.cells[0].textContent;
+                document.getElementById('totalCompaniesVisited').value = stats.cells[1].textContent;
+                document.getElementById('studentsPlaced').value = stats.cells[2].textContent;
+                document.getElementById('highestPackage').value = stats.cells[3].textContent.replace('₹', '').replace(' LPA', '');
+                document.getElementById('averagePackage').value = stats.cells[4].textContent.replace('₹', '').replace(' LPA', '');
+                
+                // Update form button text and add cancel button
+                updateFormForEditMode();
+                
+                // Scroll to the form
+                document.getElementById('placementStatsForm').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function updateFormForEditMode() {
+            const submitButton = document.querySelector('#placementStatsForm button[type="submit"]');
+            if (isEditMode) {
+                submitButton.innerHTML = '<i class="fas fa-save"></i> Update Statistics';
+                submitButton.className = 'btn btn-warning';
+                
+                // Add cancel button if it doesn't exist
+                if (!document.getElementById('cancelEditBtn')) {
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.type = 'button';
+                    cancelBtn.id = 'cancelEditBtn';
+                    cancelBtn.className = 'btn btn-secondary';
+                    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Edit';
+                    cancelBtn.onclick = exitEditMode;
+                    submitButton.parentNode.appendChild(cancelBtn);
+                }
+            } else {
+                submitButton.innerHTML = '<i class="fas fa-save"></i> Save Statistics';
+                submitButton.className = 'btn btn-primary';
+                
+                // Remove cancel button if it exists
+                const cancelBtn = document.getElementById('cancelEditBtn');
+                if (cancelBtn) {
+                    cancelBtn.remove();
+                }
+            }
+        }
+
+        function exitEditMode() {
+            isEditMode = false;
+            editingAcademicYear = null;
+            document.getElementById('placementStatsForm').reset();
+            updateFormForEditMode();
+            setCurrentAcademicYear();
+        }
+
+        async function deletePlacementStats(academicYear) {
+            if (!confirm(`Are you sure you want to delete placement statistics for ${academicYear}?`)) return;
+
+            try {
+                const response = await fetch(`/api/placement-stats/${academicYear}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message || 'Placement statistics deleted successfully');
+                    loadPlacementStats();
+                } else {
+                    showAlert('error', result.message || 'Failed to delete placement statistics');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        // Upcoming Events Functions
+        let isUpcomingEventsEditMode = false;
+        let editingEventId = null;
+
+        async function submitUpcomingEvent(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                title: formData.get('eventTitle'),
+                date: formData.get('eventDate'),
+                description: formData.get('eventDescription'),
+                eventType: formData.get('eventType'),
+                company: formData.get('eventCompany') || '',
+                location: formData.get('eventLocation') || ''
+            };
+
+            try {
+                let response;
+                if (isUpcomingEventsEditMode && editingEventId) {
+                    // Update existing event
+                    response = await fetch(`/api/upcoming-events/${editingEventId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    // Create new event
+                    response = await fetch('/api/upcoming-events', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                        },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message || 'Event saved successfully');
+                    document.getElementById('upcomingEventsForm').reset();
+                    loadUpcomingEvents();
+                    exitUpcomingEventsEditMode();
+                } else {
+                    showAlert('error', result.message || 'Failed to save event');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        async function loadUpcomingEvents() {
+            try {
+                const response = await fetch('/api/upcoming-events/all', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    displayUpcomingEvents(result.events);
+                } else {
+                    showAlert('error', 'Failed to load upcoming events');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        function displayUpcomingEvents(events) {
+            const tbody = document.getElementById('upcomingEventsTableBody');
+            tbody.innerHTML = '';
+
+            if (!events || events.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="7" style="text-align: center;">No upcoming events found</td>';
+                tbody.appendChild(row);
+                return;
+            }
+
+            events.forEach(event => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${event.title}</td>
+                    <td>${new Date(event.date).toLocaleDateString()}</td>
+                    <td>${event.eventType}</td>
+                    <td>${event.company || 'N/A'}</td>
+                    <td>${event.location || 'N/A'}</td>
+                    <td>
+                        <span class="status-badge ${event.isActive ? 'active' : 'inactive'}">
+                            ${event.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td>
+                        <button onclick="editUpcomingEvent('${event._id}')" class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;">
+                            Edit
+                        </button>
+                        <button onclick="toggleEventStatus('${event._id}')" class="btn btn-warning" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;">
+                            ${event.isActive ? 'Deactivate' : 'Activate'}
+                        </button>
+                        <button onclick="deleteUpcomingEvent('${event._id}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">
+                            Delete
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editUpcomingEvent(eventId) {
+            // Find the event data from the table
+            const eventRow = Array.from(document.querySelectorAll('#upcomingEventsTableBody tr')).find(row => 
+                row.innerHTML.includes(eventId)
+            );
+            
+            if (eventRow) {
+                // Set edit mode
+                isUpcomingEventsEditMode = true;
+                editingEventId = eventId;
+                
+                // Extract data from the table row
+                const cells = eventRow.cells;
+                const title = cells[0].textContent;
+                const date = cells[1].textContent;
+                const eventType = cells[2].textContent;
+                const company = cells[3].textContent === 'N/A' ? '' : cells[3].textContent;
+                const location = cells[4].textContent === 'N/A' ? '' : cells[4].textContent;
+                
+                // Populate the form
+                document.getElementById('eventTitle').value = title;
+                document.getElementById('eventDate').value = new Date(date).toISOString().split('T')[0];
+                document.getElementById('eventType').value = eventType;
+                document.getElementById('eventCompany').value = company;
+                document.getElementById('eventLocation').value = location;
+                document.getElementById('eventDescription').value = ''; // We'll need to fetch this from the API
+                
+                // Update form button text
+                updateUpcomingEventsFormForEditMode();
+                
+                // Scroll to the form
+                document.getElementById('upcomingEventsForm').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function updateUpcomingEventsFormForEditMode() {
+            const submitButton = document.querySelector('#upcomingEventsForm button[type="submit"]');
+            if (isUpcomingEventsEditMode) {
+                submitButton.innerHTML = '<i class="fas fa-save"></i> Update Event';
+                submitButton.className = 'btn btn-warning';
+                
+                // Add cancel button if it doesn't exist
+                if (!document.getElementById('cancelUpcomingEventsEditBtn')) {
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.type = 'button';
+                    cancelBtn.id = 'cancelUpcomingEventsEditBtn';
+                    cancelBtn.className = 'btn btn-secondary';
+                    cancelBtn.innerHTML = '<i class="fas fa-times"></i> Cancel Edit';
+                    cancelBtn.onclick = exitUpcomingEventsEditMode;
+                    submitButton.parentNode.appendChild(cancelBtn);
+                }
+            } else {
+                submitButton.innerHTML = '<i class="fas fa-save"></i> Save Event';
+                submitButton.className = 'btn btn-primary';
+                
+                // Remove cancel button if it exists
+                const cancelBtn = document.getElementById('cancelUpcomingEventsEditBtn');
+                if (cancelBtn) {
+                    cancelBtn.remove();
+                }
+            }
+        }
+
+        function exitUpcomingEventsEditMode() {
+            isUpcomingEventsEditMode = false;
+            editingEventId = null;
+            document.getElementById('upcomingEventsForm').reset();
+            updateUpcomingEventsFormForEditMode();
+        }
+
+        async function toggleEventStatus(eventId) {
+            try {
+                const response = await fetch(`/api/upcoming-events/${eventId}/toggle-status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message || 'Event status updated successfully');
+                    loadUpcomingEvents();
+                } else {
+                    showAlert('error', result.message || 'Failed to update event status');
+                }
+            } catch (error) {
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        async function deleteUpcomingEvent(eventId) {
+            if (!confirm('Are you sure you want to delete this event?')) return;
+
+            try {
+                const response = await fetch(`/api/upcoming-events/${eventId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message || 'Event deleted successfully');
+                    loadUpcomingEvents();
+                } else {
+                    showAlert('error', result.message || 'Failed to delete event');
                 }
             } catch (error) {
                 showAlert('error', 'Server error. Please try again.');

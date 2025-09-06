@@ -91,7 +91,7 @@
         
         <div class="dashboard-cards">
             <div class="card">
-                <h3 class="card-title">Placement Statistics <button onclick="fetchPlacementStats()" style="float: right; padding: 5px 10px; cursor: pointer;">🔄 Refresh</button></h3>
+                <h3 class="card-title">Placement Statistics</h3>
                 <div class="card-content" id="placement-stats">
                     <p>Total Companies Visited: <span id="companies-visited">Loading...</span></p>
                     <p>Students Placed: <span id="students-placed">Loading...</span></p>
@@ -173,10 +173,77 @@
             }
         }
 
+        // Fetch and display upcoming events
+        async function fetchUpcomingEvents() {
+            const timestamp = new Date().getTime();
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                console.log('Fetching upcoming events with token:', token);
+                const response = await fetch(`/api/upcoming-events?t=${timestamp}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('Upcoming Events API Response:', response);
+                const data = await response.json();
+                console.log('Upcoming Events API Data:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch upcoming events');
+                }
+
+                if (data.success && data.events) {
+                    displayUpcomingEvents(data.events);
+                } else {
+                    throw new Error('Invalid data format received from server');
+                }
+            } catch (error) {
+                console.error('Error fetching upcoming events:', error);
+                const errorMessage = error.message || 'Failed to load events';
+                
+                // Show error state in the UI
+                document.getElementById('upcoming-events').innerHTML = '<p>Failed to load upcoming events: ' + errorMessage + '</p>';
+            }
+        }
+
+        function displayUpcomingEvents(events) {
+            const eventsContainer = document.getElementById('upcoming-events');
+            
+            if (!events || events.length === 0) {
+                eventsContainer.innerHTML = '<p>No upcoming events scheduled.</p>';
+                return;
+            }
+
+            let eventsHTML = '';
+            events.forEach(event => {
+                const eventDate = new Date(event.date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                eventsHTML += `<p><strong>${eventDate}:</strong> ${event.title}`;
+                if (event.company) {
+                    eventsHTML += ` (${event.company})`;
+                }
+                eventsHTML += '</p>';
+            });
+
+            eventsContainer.innerHTML = eventsHTML;
+        }
+
         // Initialize dashboard functionality
         document.addEventListener('DOMContentLoaded', function() {
             // Fetch placement statistics
             fetchPlacementStats();
+            
+            // Fetch upcoming events
+            fetchUpcomingEvents();
 
             // Mobile menu toggle functionality
             const menuToggle = document.getElementById('menu-toggle');
