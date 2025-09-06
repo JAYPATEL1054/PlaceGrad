@@ -398,6 +398,12 @@
 
                 const data = await response.json();
                 debugLog('Profile update success response:', data);
+                
+                // Update localStorage with new profile data
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                userData.profile = { ...userData.profile, [field]: parseFloat(percentage) };
+                localStorage.setItem('userData', JSON.stringify(userData));
+                debugLog('Updated localStorage userData:', userData);
 
                 if (!data.success) {
                     throw new Error(data.message || 'Profile update was not successful');
