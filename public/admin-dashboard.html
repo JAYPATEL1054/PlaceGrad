@@ -418,6 +418,146 @@
                 text-align: center;
             }
         }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-applied {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-under_review {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-shortlisted {
+            background-color: #e8f5e8;
+            color: #388e3c;
+        }
+
+        .status-rejected {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .status-selected {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Pagination Controls */
+        .pagination-controls {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -445,6 +585,12 @@
                 <button id="placementStatsBtn" onclick="showSection('placementStats')">
                     <i class="fas fa-chart-line"></i>
                     Placement Statistics
+                </button>
+            </li>
+            <li>
+                <button id="applicationsBtn" onclick="showSection('applications')">
+                    <i class="fas fa-file-alt"></i>
+                    Applications Management
                 </button>
             </li>
         </ul>
@@ -870,6 +1016,81 @@
             </div>
         </div>
 
+        <!-- Applications Management Section -->
+        <div id="applications" class="dashboard-grid" style="display: none;">
+            <div class="card">
+                <h2>
+                    <i class="fas fa-file-alt"></i>
+                    Applications Management
+                    <button onclick="loadApplications()" class="btn btn-secondary" style="float: right;">
+                        <i class="fas fa-refresh"></i>
+                        Refresh
+                    </button>
+                </h2>
+                
+                <!-- Filter Controls -->
+                <div class="form-row" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <label for="statusFilter">Filter by Status</label>
+                        <select id="statusFilter" onchange="filterApplications()">
+                            <option value="">All Statuses</option>
+                            <option value="applied">Applied</option>
+                            <option value="under_review">Under Review</option>
+                            <option value="shortlisted">Shortlisted</option>
+                            <option value="rejected">Rejected</option>
+                            <option value="selected">Selected</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="companyFilter">Filter by Company</label>
+                        <select id="companyFilter" onchange="filterApplications()">
+                            <option value="">All Companies</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="searchApplications">Search</label>
+                        <input type="text" id="searchApplications" placeholder="Search by student name, company..." onkeyup="searchApplications()">
+                    </div>
+                </div>
+
+                <!-- Applications Table -->
+                <div style="overflow-x: auto;">
+                    <table class="users-table" id="applicationsTable">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Company</th>
+                                <th>Position</th>
+                                <th>Status</th>
+                                <th>Applied Date</th>
+                                <th>Interview Scheduled</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="applicationsTableBody">
+                            <!-- Applications will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="applicationsPagination">
+                    <!-- Pagination will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Application Statistics -->
+            <div class="card">
+                <h2>
+                    <i class="fas fa-chart-pie"></i>
+                    Application Statistics
+                </h2>
+                <div class="stats-grid" id="applicationStats">
+                    <!-- Statistics will be loaded here -->
+                </div>
+            </div>
+        </div>
+
         <!-- Users Table -->
         <div class="users-table-container">
             <div class="table-header">
@@ -1217,7 +1438,7 @@
         // Load and display users
         // Show/Hide sections
         function showSection(sectionId) {
-            const sections = ['dashboard', 'addUser', 'addResult', 'placementStats'];
+            const sections = ['dashboard', 'addUser', 'addResult', 'placementStats', 'applications'];
             sections.forEach(section => {
                 const element = document.getElementById(section);
                 if (element) {
@@ -1869,6 +2090,394 @@
                 }
             } catch (error) {
                 showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        // Applications Management Functions
+        let applicationsData = [];
+        let filteredApplications = [];
+        let currentPage = 1;
+        const itemsPerPage = 10;
+
+        async function loadApplications() {
+            try {
+                const response = await fetch('/api/applications/all', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    applicationsData = result.data.applications || [];
+                    filteredApplications = [...applicationsData];
+                    displayApplications();
+                    loadApplicationStats();
+                    loadCompanyFilter();
+                } else {
+                    showAlert('error', result.message || 'Failed to load applications');
+                }
+            } catch (error) {
+                console.error('Error loading applications:', error);
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        function displayApplications() {
+            const tbody = document.getElementById('applicationsTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageApplications = filteredApplications.slice(startIndex, endIndex);
+
+            if (pageApplications.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No applications found</td></tr>';
+                return;
+            }
+
+            pageApplications.forEach(application => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div>
+                            <strong>${application.userId?.username || 'N/A'}</strong><br>
+                            <small>${application.userId?.email || 'N/A'}</small>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <strong>${application.companyId?.name || application.companyName}</strong><br>
+                            <small>${application.companyId?.industry || 'N/A'}</small>
+                        </div>
+                    </td>
+                    <td>${application.position}</td>
+                    <td>
+                        <span class="status-badge status-${application.status}">
+                            ${application.status.replace('_', ' ').toUpperCase()}
+                        </span>
+                    </td>
+                    <td>${new Date(application.appliedAt).toLocaleDateString()}</td>
+                    <td>${application.interviewScheduled ? new Date(application.interviewScheduled).toLocaleDateString() : 'Not scheduled'}</td>
+                    <td>
+                        <button onclick="viewApplication('${application._id}')" class="btn btn-sm btn-info" title="View Details">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button onclick="updateApplicationStatus('${application._id}')" class="btn btn-sm btn-warning" title="Update Status">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updatePagination();
+        }
+
+        function loadApplicationStats() {
+            const statsContainer = document.getElementById('applicationStats');
+            if (!statsContainer) return;
+
+            const stats = {
+                total: applicationsData.length,
+                applied: applicationsData.filter(app => app.status === 'applied').length,
+                underReview: applicationsData.filter(app => app.status === 'under_review').length,
+                shortlisted: applicationsData.filter(app => app.status === 'shortlisted').length,
+                rejected: applicationsData.filter(app => app.status === 'rejected').length,
+                selected: applicationsData.filter(app => app.status === 'selected').length
+            };
+
+            statsContainer.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-number">${stats.total}</div>
+                    <div class="stat-label">Total Applications</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${stats.applied}</div>
+                    <div class="stat-label">Applied</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${stats.underReview}</div>
+                    <div class="stat-label">Under Review</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${stats.shortlisted}</div>
+                    <div class="stat-label">Shortlisted</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${stats.rejected}</div>
+                    <div class="stat-label">Rejected</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${stats.selected}</div>
+                    <div class="stat-label">Selected</div>
+                </div>
+            `;
+        }
+
+        async function loadCompanyFilter() {
+            try {
+                const response = await fetch('/api/companies');
+                const result = await response.json();
+
+                if (result.success) {
+                    const companyFilter = document.getElementById('companyFilter');
+                    if (companyFilter) {
+                        companyFilter.innerHTML = '<option value="">All Companies</option>';
+                        result.data.forEach(company => {
+                            const option = document.createElement('option');
+                            option.value = company._id;
+                            option.textContent = company.name;
+                            companyFilter.appendChild(option);
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading companies for filter:', error);
+            }
+        }
+
+        function filterApplications() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const companyFilter = document.getElementById('companyFilter').value;
+            const searchTerm = document.getElementById('searchApplications').value.toLowerCase();
+
+            filteredApplications = applicationsData.filter(application => {
+                const matchesStatus = !statusFilter || application.status === statusFilter;
+                const matchesCompany = !companyFilter || application.companyId?._id === companyFilter || application.companyName === companyFilter;
+                const matchesSearch = !searchTerm || 
+                    application.userId?.username?.toLowerCase().includes(searchTerm) ||
+                    application.userId?.email?.toLowerCase().includes(searchTerm) ||
+                    application.companyId?.name?.toLowerCase().includes(searchTerm) ||
+                    application.companyName?.toLowerCase().includes(searchTerm) ||
+                    application.position?.toLowerCase().includes(searchTerm);
+
+                return matchesStatus && matchesCompany && matchesSearch;
+            });
+
+            currentPage = 1;
+            displayApplications();
+        }
+
+        function searchApplications() {
+            filterApplications();
+        }
+
+        function updatePagination() {
+            const paginationContainer = document.getElementById('applicationsPagination');
+            if (!paginationContainer) return;
+
+            const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '<div class="pagination-controls">';
+            
+            // Previous button
+            paginationHTML += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="btn btn-sm">Previous</button>`;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    paginationHTML += `<button onclick="changePage(${i})" class="btn btn-sm ${i === currentPage ? 'btn-primary' : ''}">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    paginationHTML += '<span>...</span>';
+                }
+            }
+            
+            // Next button
+            paginationHTML += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="btn btn-sm">Next</button>`;
+            
+            paginationHTML += '</div>';
+            paginationContainer.innerHTML = paginationHTML;
+        }
+
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredApplications.length / itemsPerPage);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                displayApplications();
+            }
+        }
+
+        function viewApplication(applicationId) {
+            const application = applicationsData.find(app => app._id === applicationId);
+            if (!application) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Application Details</h3>
+                        <button onclick="closeModal()" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Student Name</label>
+                                <p>${application.userId?.username || 'N/A'}</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <p>${application.userId?.email || 'N/A'}</p>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Company</label>
+                                <p>${application.companyId?.name || application.companyName}</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Position</label>
+                                <p>${application.position}</p>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <p><span class="status-badge status-${application.status}">${application.status.replace('_', ' ').toUpperCase()}</span></p>
+                            </div>
+                            <div class="form-group">
+                                <label>Applied Date</label>
+                                <p>${new Date(application.appliedAt).toLocaleString()}</p>
+                            </div>
+                        </div>
+                        ${application.interviewScheduled ? `
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Interview Scheduled</label>
+                                <p>${new Date(application.interviewScheduled).toLocaleString()}</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Interview Location</label>
+                                <p>${application.interviewLocation || 'Not specified'}</p>
+                            </div>
+                        </div>
+                        ` : ''}
+                        ${application.coverLetter ? `
+                        <div class="form-group">
+                            <label>Cover Letter</label>
+                            <p style="white-space: pre-wrap;">${application.coverLetter}</p>
+                        </div>
+                        ` : ''}
+                        ${application.adminNotes ? `
+                        <div class="form-group">
+                            <label>Admin Notes</label>
+                            <p style="white-space: pre-wrap;">${application.adminNotes}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="closeModal()" class="btn btn-secondary">Close</button>
+                        <button onclick="updateApplicationStatus('${applicationId}')" class="btn btn-primary">Update Status</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function updateApplicationStatus(applicationId) {
+            const application = applicationsData.find(app => app._id === applicationId);
+            if (!application) return;
+
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Update Application Status</h3>
+                        <button onclick="closeModal()" class="close-btn">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="updateStatusForm">
+                            <div class="form-group">
+                                <label for="newStatus">Status</label>
+                                <select id="newStatus" required>
+                                    <option value="applied" ${application.status === 'applied' ? 'selected' : ''}>Applied</option>
+                                    <option value="under_review" ${application.status === 'under_review' ? 'selected' : ''}>Under Review</option>
+                                    <option value="shortlisted" ${application.status === 'shortlisted' ? 'selected' : ''}>Shortlisted</option>
+                                    <option value="rejected" ${application.status === 'rejected' ? 'selected' : ''}>Rejected</option>
+                                    <option value="selected" ${application.status === 'selected' ? 'selected' : ''}>Selected</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="interviewDate">Interview Date (Optional)</label>
+                                <input type="datetime-local" id="interviewDate" value="${application.interviewScheduled ? new Date(application.interviewScheduled).toISOString().slice(0, 16) : ''}">
+                            </div>
+                            <div class="form-group">
+                                <label for="interviewLocation">Interview Location (Optional)</label>
+                                <input type="text" id="interviewLocation" value="${application.interviewLocation || ''}" placeholder="Enter interview location">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminNotes">Admin Notes (Optional)</label>
+                                <textarea id="adminNotes" rows="3" placeholder="Enter admin notes">${application.adminNotes || ''}</textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button onclick="closeModal()" class="btn btn-secondary">Cancel</button>
+                        <button onclick="submitStatusUpdate('${applicationId}')" class="btn btn-primary">Update Status</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        async function submitStatusUpdate(applicationId) {
+            try {
+                const newStatus = document.getElementById('newStatus').value;
+                const interviewDate = document.getElementById('interviewDate').value;
+                const interviewLocation = document.getElementById('interviewLocation').value;
+                const adminNotes = document.getElementById('adminNotes').value;
+
+                const updateData = {
+                    status: newStatus,
+                    adminNotes: adminNotes
+                };
+
+                if (interviewDate) {
+                    updateData.interviewScheduled = new Date(interviewDate).toISOString();
+                }
+
+                if (interviewLocation) {
+                    updateData.interviewLocation = interviewLocation;
+                }
+
+                const response = await fetch(`/api/applications/${applicationId}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                    },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showAlert('success', result.message || 'Application status updated successfully');
+                    closeModal();
+                    loadApplications();
+                } else {
+                    showAlert('error', result.message || 'Failed to update application status');
+                }
+            } catch (error) {
+                console.error('Error updating application status:', error);
+                showAlert('error', 'Server error. Please try again.');
+            }
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) {
+                modal.remove();
             }
         }
     </script>

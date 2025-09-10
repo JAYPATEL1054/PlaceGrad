@@ -9,6 +9,7 @@ const connectDB = require('./config/database');
 // Import routes
 const routes = require('./routes');
 const academicResultRoutes = require('./routes/academicResultRoutes');
+const applicationRoutes = require('./routes/application');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -41,6 +42,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
 // API Routes
 app.use('/api', routes);
 app.use('/api/academic-results', academicResultRoutes);
+app.use('/api/applications', applicationRoutes);
 
 // Chatbot Proxy Routes
 app.post('/chat', async (req, res) => {

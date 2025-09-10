@@ -6,7 +6,10 @@ const auth = async (req, res, next) => {
         // Get token from header
         const authHeader = req.header('Authorization');
         
+        console.log('Auth middleware - Authorization header:', authHeader);
+        
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            console.log('Auth middleware - No valid token provided');
             return res.status(401).json({
                 success: false,
                 message: 'No token provided, authorization denied'
@@ -18,12 +21,17 @@ const auth = async (req, res, next) => {
 
         try {
             // Verify token
+            console.log('Auth middleware - Verifying token:', token.substring(0, 50) + '...');
             const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+            console.log('Auth middleware - Token decoded successfully:', decoded);
             
             // Check if user still exists and is active
+            console.log('Auth middleware - Looking for user with ID:', decoded.userId);
             const user = await User.findById(decoded.userId).select('-password');
+            console.log('Auth middleware - User found:', user ? 'Yes' : 'No');
             
             if (!user) {
+                console.log('Auth middleware - User not found in database');
                 return res.status(401).json({
                     success: false,
                     message: 'Token is invalid - user not found'
@@ -39,7 +47,8 @@ const auth = async (req, res, next) => {
 
             // Add user info to request
             req.user = {
-                userId: user._id.toString(),
+                id: user._id.toString(),
+                userId: user._id.toString(), // Keep both for compatibility
                 username: user.username,
                 email: user.email,
                 role: user.role,

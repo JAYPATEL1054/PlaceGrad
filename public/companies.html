@@ -191,6 +191,21 @@
             background: linear-gradient(45deg, #808080, #a0a0a0);
         }
 
+        .apply-btn.applied {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            cursor: default;
+        }
+
+        .apply-btn.applied::before {
+            content: "✅";
+        }
+
+        .apply-btn.applied:hover {
+            transform: none;
+            box-shadow: 0 4px 15px rgba(0, 128, 255, 0.3);
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
         .apply-btn:hover {
             background: linear-gradient(45deg, #009ecb, #0066cc);
             transform: translateY(-2px);
@@ -488,7 +503,7 @@
                     <div class="company-description">
                         Leading global IT services company offering excellent career opportunities in software development, consulting, and digital transformation projects.
                     </div>
-                    <button class="apply-btn" onclick="applyToCompany('TCS')">Apply Now</button>
+                    <button class="apply-btn" onclick="applyToCompany('sample-tcs-id', 'TCS')">Apply Now</button>
                 </div>
             </div>
 
@@ -518,7 +533,7 @@
                     <div class="company-description">
                         Global leader in next-generation digital services and consulting. Join our team to work on cutting-edge technologies and innovative solutions.
                     </div>
-                    <button class="apply-btn" onclick="applyToCompany('Infosys')">Apply Now</button>
+                    <button class="apply-btn" onclick="applyToCompany('sample-infosys-id', 'Infosys')">Apply Now</button>
                 </div>
             </div>
 
@@ -533,6 +548,7 @@
     <script>
         // Initialize companies data array
         let companiesData = [];
+        let userApplications = [];
 
         // Listen for profile updates
         window.addEventListener('storage', (e) => {
@@ -596,7 +612,7 @@
         }
 
         // Function to apply to a company
-        function applyToCompany(companyName) {
+        async function applyToCompany(companyId, companyName) {
             const userData = JSON.parse(localStorage.getItem('userData')) || {};
             const profile = userData.profile || {};
             const enrollmentNumber = profile.enrollmentNumber;
@@ -613,7 +629,57 @@
                 showAlert('error', errorMessage);
                 return;
             }
-            showAlert('success', `🎉 Application submitted successfully for ${companyName}!`);
+
+            // Check if user is logged in
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                showAlert('error', '❌ Please log in to apply for companies.');
+                return;
+            }
+
+            try {
+                // Show loading state
+                const applyButton = event.target;
+                const originalText = applyButton.textContent;
+                applyButton.textContent = 'Applying...';
+                applyButton.disabled = true;
+
+                const response = await fetch('/api/applications/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        companyId: companyId,
+                        coverLetter: '', // Can be enhanced later to include cover letter
+                        resumeUrl: '' // Can be enhanced later to include resume URL
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', `🎉 Application submitted successfully for ${companyName}!`);
+                    // Disable the apply button to prevent duplicate applications
+                    applyButton.textContent = 'Applied';
+                    applyButton.disabled = true;
+                    applyButton.classList.add('applied');
+                    // Refresh user applications to update all button states
+                    await loadUserApplications();
+                } else {
+                    showAlert('error', `❌ ${result.message}`);
+                    // Reset button state
+                    applyButton.textContent = originalText;
+                    applyButton.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error applying to company:', error);
+                showAlert('error', '❌ Failed to submit application. Please try again.');
+                // Reset button state
+                applyButton.textContent = originalText;
+                applyButton.disabled = false;
+            }
         }
         
         // Function to load companies from API
@@ -625,6 +691,8 @@
                 if (result.success) {
                     companiesData = result.data;
                     displayCompanies();
+                    // Load user's applications to update button states
+                    await loadUserApplications();
                 } else {
                     console.error('Error loading companies:', result.message);
                     showAlert('error', '❌ Failed to load companies. Please try again later.');
@@ -633,6 +701,28 @@
                 console.error('Error loading companies:', error);
                 // For demo purposes, we'll show the sample data
                 console.log('Using sample data for demonstration');
+            }
+        }
+
+        // Function to load user's applications
+        async function loadUserApplications() {
+            const token = localStorage.getItem('authToken');
+            if (!token) return;
+
+            try {
+                const response = await fetch('/api/applications/my-applications', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    userApplications = result.data.applications || [];
+                    updateApplyButtons();
+                }
+            } catch (error) {
+                console.error('Error loading user applications:', error);
             }
         }
         
@@ -646,22 +736,44 @@
             console.log('Found apply buttons:', applyButtons.length);
             
             applyButtons.forEach(button => {
-                const companyName = button.getAttribute('onclick').match(/'([^']+)'/)[1];
-                const isEligible = checkEligibility(companyName);
-                const requiredPercentage = companyRequirements[companyName.toLowerCase()] || 60;
+                const onclickAttr = button.getAttribute('onclick');
+                const match = onclickAttr.match(/applyToCompany\('([^']+)',\s*'([^']+)'\)/);
                 
-                console.log('Button update for company:', {
-                    companyName,
-                    isEligible,
-                    requiredPercentage
-                });
-                
-                if (!isEligible) {
-                    button.classList.add('disabled');
-                    button.title = `Not eligible - Both 10th and 12th percentages must be at least ${requiredPercentage}%`;
-                } else {
-                    button.classList.remove('disabled');
-                    button.title = 'Click to apply';
+                if (match) {
+                    const companyId = match[1];
+                    const companyName = match[2];
+                    const isEligible = checkEligibility(companyName);
+                    const requiredPercentage = companyRequirements[companyName.toLowerCase()] || 60;
+                    
+                    // Check if user has already applied to this company
+                    const hasApplied = userApplications.some(app => 
+                        app.companyId === companyId || app.companyName === companyName
+                    );
+                    
+                    console.log('Button update for company:', {
+                        companyId,
+                        companyName,
+                        isEligible,
+                        requiredPercentage,
+                        hasApplied
+                    });
+                    
+                    if (hasApplied) {
+                        button.textContent = 'Applied';
+                        button.disabled = true;
+                        button.classList.add('applied');
+                        button.classList.remove('disabled');
+                        button.title = 'You have already applied to this company';
+                    } else if (!isEligible) {
+                        button.classList.add('disabled');
+                        button.classList.remove('applied');
+                        button.title = `Not eligible - Both 10th and 12th percentages must be at least ${requiredPercentage}%`;
+                    } else {
+                        button.classList.remove('disabled', 'applied');
+                        button.textContent = 'Apply Now';
+                        button.disabled = false;
+                        button.title = 'Click to apply';
+                    }
                 }
             });
         }
@@ -706,7 +818,7 @@
                             <div class="company-detail company-eligibility">Eligibility: ${company.eligibility}</div>
                         </div>
                         <div class="company-description">${company.description}</div>
-                        <button class="apply-btn" onclick="applyToCompany('${company.name}')">Apply Now</button>
+                        <button class="apply-btn" onclick="applyToCompany('${company._id}', '${company.name}')">Apply Now</button>
                     </div>
                 `;
                 
