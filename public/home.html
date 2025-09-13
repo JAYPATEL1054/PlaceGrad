@@ -200,7 +200,7 @@
             50% { transform: translateY(-20px); }
         }
 
-        /* Chatbot Styles */
+        /* Enhanced Chatbot Styles */
         #chatbot-toggle {
             position: fixed;
             bottom: 20px;
@@ -216,6 +216,9 @@
             box-shadow: 0 4px 15px rgba(0, 102, 204, 0.3);
             transition: all 0.3s ease;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         #chatbot-toggle:hover {
@@ -238,6 +241,7 @@
             overflow: hidden;
             flex-direction: column;
             font-family: 'Segoe UI', sans-serif;
+            max-height: 600px;
         }
 
         #chatbot-header {
@@ -280,17 +284,14 @@
             color: #fff;
             cursor: pointer;
             padding: 4px 8px;
-            font-size: 16px;
+            font-size: 18px;
             border-radius: 4px;
             transition: background-color 0.2s;
+            line-height: 1;
         }
 
         #chatbot-close:hover {
             background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        #chatbot-close:hover {
-            background: rgba(255, 255, 255, 0.3);
         }
 
         #chatbot-messages {
@@ -398,6 +399,7 @@
             color: #666;
             font-style: italic;
             padding: 10px 16px;
+            background: #f8f9fa;
         }
 
         .typing-indicator.show {
@@ -405,9 +407,47 @@
         }
 
         .error-message {
-            background: #ffe6e6;
-            color: #d63031;
-            border: 1px solid #fab1a0;
+            background: #ffe6e6 !important;
+            color: #d63031 !important;
+            border: 1px solid #fab1a0 !important;
+        }
+
+        .connection-status {
+            font-size: 12px;
+            text-align: center;
+            padding: 8px;
+            background: #e8f4fd;
+            border-bottom: 1px solid #e1e5e9;
+            color: #0066cc;
+        }
+
+        .connection-status.offline {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e1e5e9;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            background: #e9ecef;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background: #dee2e6;
         }
 
         /* Responsive Design */
@@ -438,6 +478,7 @@
             #chatbot-box {
                 width: 95vw;
                 right: 2.5vw;
+                max-height: 70vh;
             }
 
             #chatbot-toggle {
@@ -445,6 +486,10 @@
                 right: 15px;
                 padding: 12px 16px;
                 font-size: 14px;
+            }
+
+            #chatbot-messages {
+                height: 250px;
             }
         }
     </style>
@@ -525,17 +570,29 @@
         </div>
     </footer>
 
-    <!-- Chatbot Button -->
-    <button id="chatbot-toggle" onclick="toggleChatbot()">🤖 Chat with Us</button>
+    <!-- Enhanced Chatbot Button -->
+    <button id="chatbot-toggle" onclick="toggleChatbot()">
+        <span>💬</span>
+        <span>Chat with Us</span>
+    </button>
     
-    <!-- Chatbot Box -->
+    <!-- Enhanced Chatbot Box -->
     <div id="chatbot-box">
         <div id="chatbot-header">
-            PlaceGrad Assistant 
-            <span id="chatbot-close" onclick="toggleChatbot()">×</span>
+            <span>PlaceGrad Assistant</span>
+            <div class="chatbot-controls">
+                <button id="clear-chat" onclick="clearChat()" title="Clear Chat">🗑️</button>
+                <button id="chatbot-close" onclick="toggleChatbot()">&times;</button>
+            </div>
         </div>
+        <div class="connection-status" id="connection-status">Connected to PlaceGrad AI</div>
         <div id="chatbot-messages"></div>
         <div class="typing-indicator" id="typing-indicator">Bot is typing...</div>
+        <div class="quick-actions">
+            <button class="quick-action-btn" onclick="askQuickQuestion('Tell me about interview tips')">Interview Tips</button>
+            <button class="quick-action-btn" onclick="askQuickQuestion('Show me company information')">Companies</button>
+            <button class="quick-action-btn" onclick="askQuickQuestion('Help with resume')">Resume Help</button>
+        </div>
         <div id="chatbot-input">
             <textarea id="user-input" placeholder="Ask about placements, companies, interviews..." rows="1"></textarea>
             <button id="send-btn" onclick="sendMessage()">Send</button>
@@ -543,8 +600,9 @@
     </div>
 
     <script>
-        // Chatbot functionality with Flask backend integration
+        // Enhanced Chatbot functionality
         let isTyping = false;
+        let isOnline = true;
 
         function toggleChatbot() {
             const bot = document.getElementById('chatbot-box');
@@ -555,6 +613,7 @@
                 document.getElementById('user-input').focus();
                 // Load chat history when opening
                 loadChatHistory();
+                checkSystemHealth();
             }
         }
 
@@ -594,6 +653,19 @@
             indicator.classList.remove('show');
         }
 
+        function updateConnectionStatus(online = true) {
+            const statusDiv = document.getElementById('connection-status');
+            isOnline = online;
+            
+            if (online) {
+                statusDiv.textContent = 'Connected to PlaceGrad AI';
+                statusDiv.className = 'connection-status';
+            } else {
+                statusDiv.textContent = 'Using offline mode';
+                statusDiv.className = 'connection-status offline';
+            }
+        }
+
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
@@ -612,13 +684,14 @@
             showTypingIndicator();
 
             try {
-                // Send to Flask backend
+                // Try Flask backend first
                 const response = await fetch('/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ message: message }),
+                    timeout: 10000
                 });
 
                 if (!response.ok) {
@@ -629,12 +702,34 @@
                 
                 // Hide typing indicator and show response
                 hideTypingIndicator();
+                updateConnectionStatus(true);
                 addMessage(data.reply || 'Sorry, I didn\'t understand that.');
 
             } catch (error) {
                 console.error('Chat error:', error);
                 hideTypingIndicator();
-                addMessage('Sorry, I\'m having trouble connecting. Please try again later.', false, true);
+                updateConnectionStatus(false);
+                
+                // Use Node.js fallback
+                try {
+                    const fallbackResponse = await fetch('http://localhost:3000/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message: message })
+                    });
+                    
+                    if (fallbackResponse.ok) {
+                        const fallbackData = await fallbackResponse.json();
+                        addMessage(fallbackData.reply || 'Sorry, I\'m having technical difficulties.');
+                    } else {
+                        throw new Error('Both services unavailable');
+                    }
+                } catch (fallbackError) {
+                    console.error('Fallback error:', fallbackError);
+                    addMessage('I\'m having trouble connecting to my services. Please try again in a moment, or ask me basic questions about placements and companies.', false, true);
+                }
             } finally {
                 isTyping = false;
                 sendBtn.disabled = false;
@@ -659,13 +754,14 @@
                             addMessage(item.bot);
                         });
                     }
+                    updateConnectionStatus(true);
                 } else {
-                    // Flask backend not available, show welcome message
-                    addWelcomeMessage();
+                    throw new Error('History not available');
                 }
             } catch (error) {
-                console.warn('Chat history not available, using standalone mode:', error);
+                console.warn('Chat history not available:', error);
                 addWelcomeMessage();
+                updateConnectionStatus(false);
             }
         }
 
@@ -682,7 +778,28 @@
                 addMessage('Chat history cleared. How can I help you?');
             } catch (error) {
                 console.error('Error clearing chat:', error);
+                document.getElementById('chatbot-messages').innerHTML = '';
+                addMessage('Chat cleared locally. How can I help you?');
             }
+        }
+
+        async function checkSystemHealth() {
+            try {
+                const response = await fetch('/health');
+                if (response.ok) {
+                    updateConnectionStatus(true);
+                } else {
+                    updateConnectionStatus(false);
+                }
+            } catch (error) {
+                updateConnectionStatus(false);
+            }
+        }
+
+        function askQuickQuestion(question) {
+            const input = document.getElementById('user-input');
+            input.value = question;
+            sendMessage();
         }
 
         // Auto-resize textarea
@@ -701,7 +818,7 @@
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('PlaceGrad chatbot initialized with Flask backend');
+            console.log('PlaceGrad chatbot initialized with enhanced features');
         });
     </script>
 </body>
