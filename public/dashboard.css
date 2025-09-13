@@ -587,3 +587,64 @@ body {
   transform: translateX(-4px);
   color: #444;               /* slightly darker arrow on hover */
 }
+
+/* Application Status Badges */
+.status-applied {
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-under-review {
+    background: linear-gradient(45deg, #ffc107, #e0a800);
+    color: #212529;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-shortlisted {
+    background: linear-gradient(45deg, #28a745, #1e7e34);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-rejected {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-selected {
+    background: linear-gradient(45deg, #17a2b8, #138496);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}

@@ -248,6 +248,43 @@ const updateApplicationStatus = async (req, res) => {
     }
 };
 
+// Get user's application status for dashboard
+const getUserApplicationStatus = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Get all applications for the user with company details
+        const applications = await Application.find({ userId: userId })
+            .populate('companyId', 'name industry')
+            .sort({ appliedAt: -1 })
+            .select('companyName position status appliedAt companyId');
+
+        // Format the data for dashboard display
+        const applicationStatus = applications.map(app => ({
+            companyName: app.companyName,
+            position: app.position,
+            status: app.status,
+            appliedAt: app.appliedAt
+        }));
+
+        res.json({
+            success: true,
+            data: {
+                applications: applicationStatus,
+                totalApplications: applications.length
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching user application status:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        });
+    }
+};
+
 // Get application statistics
 const getApplicationStats = async (req, res) => {
     try {
@@ -289,5 +326,6 @@ module.exports = {
     getUserApplications,
     getAllApplications,
     updateApplicationStatus,
-    getApplicationStats
+    getApplicationStats,
+    getUserApplicationStatus
 };
