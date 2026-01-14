@@ -629,6 +629,13 @@ def analyze_resume():
 # ====================================================
 # FRONTEND ROUTES
 # ====================================================
+@app.route("/")
+def index():
+    try:
+        return send_from_directory("public", "home.html")
+    except:
+        return "Welcome to PlaceGrad"
+
 @app.route("/home.html")
 def home():
     try:
