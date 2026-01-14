@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resume Builder - PlaceGrad</title>
+  <link rel="stylesheet" href="resume.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Move scripts to head with defer attribute -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <script src="resume.js" defer></script>
+</head>
+<body>
+  <header class="resume-header">
+    <h1>Resume Builder</h1>
+    <p>Create a professional resume in minutes</p>
+    <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+  </header>
+
+  <main class="resume-container">
+    <div class="resume-builder">
+      <div class="template-selector">
+        <h2>Choose a Template</h2>
+        <div class="template-options">
+          <div class="template-option active" data-template="professional">
+            <div class="template-preview professional"></div>
+            <span>Professional</span>
+          </div>
+          <div class="template-option" data-template="modern">
+            <div class="template-preview modern"></div>
+            <span>Modern</span>
+          </div>
+          <div class="template-option" data-template="creative">
+            <div class="template-preview creative"></div>
+            <span>Creative</span>
+          </div>
+          <div class="template-option" data-template="elegant">
+            <div class="template-preview elegant"></div>
+            <span>Elegant</span>
+          </div>
+          <div class="template-option" data-template="bold">
+            <div class="template-preview bold"></div>
+            <span>Bold</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-container">
+        <div class="form-section active" id="personal-info">
+          <h2>Personal Information</h2>
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="John Doe">
+            <small class="form-hint">Use your full professional name as you want it to appear on your resume</small>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="john@example.com">
+            <small class="form-hint">Use a professional email address that you check regularly</small>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" placeholder="+91 9876543210">
+            <small class="form-hint">Include your country code for international applications</small>
+          </div>
+          <div class="form-group">
+            <label for="location">Location</label>
+            <input type="text" id="location" placeholder="City, State">
+            <small class="form-hint">City and state/province are usually sufficient</small>
+          </div>
+          <div class="form-group">
+            <label for="linkedin">LinkedIn (Optional)</label>
+            <input type="url" id="linkedin" placeholder="linkedin.com/in/johndoe">
+            <small class="form-hint">Include only the username part, not the full URL</small>
+          </div>
+          <div class="form-group">
+            <label for="github">GitHub (Optional)</label>
+            <input type="url" id="github" placeholder="github.com/johndoe">
+            <small class="form-hint">Great for technical roles to showcase your code</small>
+          </div>
+          <div class="form-group">
+            <label for="summary">Professional Summary</label>
+            <textarea id="summary" rows="4" placeholder="Brief overview of your professional background and goals"></textarea>
+            <small class="form-hint">Keep it concise (3-4 sentences) and highlight your key strengths</small>
+          </div>
+          <div class="form-nav">
+            <button class="btn next-btn" data-next="education">Next: Education <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <div class="form-section" id="education">
+          <h2>Education</h2>
+          <div id="education-entries">
+            <div class="education-entry">
+              <div class="form-group">
+                <label>Degree</label>
+                <input type="text" class="degree" placeholder="Bachelor of Technology">
+                <small class="form-hint">Include the full name of your degree</small>
+              </div>
+              <div class="form-group">
+                <label>Institution</label>
+                <input type="text" class="institution" placeholder="LDRP Institute of Technology">
+                <small class="form-hint">Use the official name of your university/college</small>
+              </div>
+              <div class="form-row">
+                <div class="form-group half">
+                  <label>Start Year</label>
+                  <input type="text" class="start-year" placeholder="2020">
+                </div>
+                <div class="form-group half">
+                  <label>End Year (or Expected)</label>
+                  <input type="text" class="end-year" placeholder="2024">
+                  <small class="form-hint">Write "Present" if you're still studying</small>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>CGPA/Percentage</label>
+                <input type="text" class="cgpa" placeholder="8.5 CGPA">
+                <small class="form-hint">Include the scale (e.g., "8.5/10 CGPA" or "85%")</small>
+              </div>
+            </div>
+          </div>
+          <button class="btn add-btn" id="add-education"><i class="fas fa-plus"></i> Add Another Education</button>
+          <div class="form-nav">
+            <button class="btn prev-btn" data-prev="personal-info"><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="btn next-btn" data-next="experience">Next: Experience <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <div class="form-section" id="experience">
+          <h2>Work Experience</h2>
+          <div id="experience-entries">
+            <div class="experience-entry">
+              <div class="form-group">
+                <label>Job Title</label>
+                <input type="text" class="job-title" placeholder="Software Engineer Intern">
+                <small class="form-hint">Use the official title from your offer letter</small>
+              </div>
+              <div class="form-group">
+                <label>Company</label>
+                <input type="text" class="company" placeholder="Tech Solutions Ltd.">
+                <small class="form-hint">Include the full company name</small>
+              </div>
+              <div class="form-row">
+                <div class="form-group half">
+                  <label>Start Date</label>
+                  <input type="text" class="start-date" placeholder="June 2023">
+                </div>
+                <div class="form-group half">
+                  <label>End Date</label>
+                  <input type="text" class="end-date" placeholder="August 2023 (or Present)">
+                  <small class="form-hint">Write "Present" if this is your current job</small>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Responsibilities & Achievements</label>
+                <textarea class="responsibilities" rows="4" placeholder="• Developed a feature that improved efficiency by 20%&#10;• Collaborated with a team of 5 developers&#10;• Implemented responsive design for mobile users"></textarea>
+                <small class="form-hint">Use bullet points starting with action verbs and include metrics where possible</small>
+              </div>
+            </div>
+          </div>
+          <button class="btn add-btn" id="add-experience"><i class="fas fa-plus"></i> Add Another Experience</button>
+          <div class="form-nav">
+            <button class="btn prev-btn" data-prev="education"><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="btn next-btn" data-next="skills">Next: Skills <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <div class="form-section" id="skills">
+          <h2>Skills</h2>
+          <div class="form-group">
+            <label>Technical Skills</label>
+            <textarea id="technical-skills" rows="3" placeholder="Java, Python, React, Node.js, SQL, Git (separate with commas)"></textarea>
+            <small class="form-hint">List your most relevant technical skills, prioritizing those mentioned in job descriptions</small>
+          </div>
+          <div class="form-group">
+            <label>Soft Skills</label>
+            <textarea id="soft-skills" rows="3" placeholder="Team Collaboration, Problem Solving, Communication (separate with commas)"></textarea>
+            <small class="form-hint">Include soft skills that complement your technical abilities</small>
+          </div>
+          <div class="form-group">
+            <label>Languages</label>
+            <textarea id="languages" rows="2" placeholder="English (Fluent), Hindi (Native) (separate with commas)"></textarea>
+            <small class="form-hint">Include proficiency level in parentheses</small>
+          </div>
+          <div class="form-nav">
+            <button class="btn prev-btn" data-prev="experience"><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="btn next-btn" data-next="projects">Next: Projects <i class="fas fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <div class="form-section" id="projects">
+          <h2>Projects</h2>
+          <div id="project-entries">
+            <div class="project-entry">
+              <div class="form-group">
+                <label>Project Name</label>
+                <input type="text" class="project-name" placeholder="E-commerce Website">
+                <small class="form-hint">Use a clear, descriptive name for your project</small>
+              </div>
+              <div class="form-group">
+                <label>Technologies Used</label>
+                <input type="text" class="technologies" placeholder="React, Node.js, MongoDB">
+                <small class="form-hint">List the main technologies, frameworks, and tools used</small>
+              </div>
+              <div class="form-group">
+                <label>Project Description</label>
+                <textarea class="project-description" rows="4" placeholder="• Built a full-stack e-commerce platform&#10;• Implemented user authentication and payment gateway&#10;• Designed responsive UI for all devices"></textarea>
+                <small class="form-hint">Focus on your role, challenges overcome, and the impact of your work</small>
+              </div>
+              <div class="form-group">
+                <label>Project Link (Optional)</label>
+                <input type="url" class="project-link" placeholder="https://github.com/yourusername/project">
+                <small class="form-hint">Include a link to the live project or GitHub repository</small>
+              </div>
+            </div>
+          </div>
+          <button class="btn add-btn" id="add-project"><i class="fas fa-plus"></i> Add Another Project</button>
+          <div class="form-nav">
+            <button class="btn prev-btn" data-prev="skills"><i class="fas fa-arrow-left"></i> Previous</button>
+            <button class="btn generate-btn" id="generate-resume">Generate Resume <i class="fas fa-file-alt"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="resume-preview">
+      <div class="preview-header">
+        <h2>Live Preview</h2>
+        <div class="preview-actions">
+          <button class="btn download-btn" id="download-pdf"><i class="fas fa-download"></i> Download PDF</button>
+          <button class="btn download-btn" id="download-docx"><i class="fas fa-file-word"></i> Download DOCX</button>
+        </div>
+      </div>
+      <div class="preview-container">
+        <div class="resume-document" id="resume-preview">
+          <!-- Live preview will be rendered here -->
+          <div class="resume-loading">
+            <p>Fill in your details to see the preview</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer-info">
+    <p>© 2025 LDRP Institute of Technology and Research</p>
+  </footer>
+
+</body>
+</html>

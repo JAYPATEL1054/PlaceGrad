@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - PlaceGrad</title>
+    <link rel="stylesheet" href="login.css">
+    <style>
+        .otp-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .otp-input {
+            width: 50px;
+            height: 50px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+        }
+        
+        .otp-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            transform: scale(1.05);
+        }
+        
+        .otp-input.filled {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .resend-section {
+            text-align: center;
+            margin: 20px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .resend-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .resend-link:hover {
+            color: #1e40af;
+            text-decoration: underline;
+        }
+        
+        .resend-link.disabled {
+            color: #9ca3af;
+            cursor: not-allowed;
+            text-decoration: none;
+        }
+        
+        .timer {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        .email-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #1e40af;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            text-align: center;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .back-to-login {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .back-to-login a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-login a:hover {
+            color: #3b82f6;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Image -->
+    <div class="tp-bgimg defaultimg" style="background-color: rgba(0, 0, 0, 0); background-repeat: no-repeat; background-image: url('https://www.ldrp.ac.in/wp-content/uploads/LDRP-Optimized.png'); background-size: cover; background-position: center center; width: 100%; height: 100%; opacity: 1; visibility: inherit; z-index: 20;"></div>
+    
+    <!-- Background overlay -->
+    <div class="overlay"></div>
+    
+    <!-- Floating decorative elements -->
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <!-- Top Logo Section -->
+    <header class="top-header">
+        <div class="logo-container-top">
+            <img src="https://www.ldrp.ac.in/wp-content/uploads/LDRP-logo-3.png" alt="LDRP Institute of Technology and Research - Home" class="top-logo">
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <div class="login-card">
+            <h1 class="title">Verify OTP</h1>
+            <p class="subtitle">Enter the verification code sent to your email</p>
+            
+            <div class="email-info" id="emailInfo">
+                Verification code sent to your email
+            </div>
+            
+            <div class="error-message" id="errorMessage">
+                Invalid OTP. Please try again.
+            </div>
+            
+            <div class="success-message" id="successMessage">
+                OTP verified successfully! Redirecting...
+            </div>
+            
+            <form id="otpForm">
+                <div class="otp-container">
+                    <input type="text" class="otp-input" maxlength="1" id="otp1" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" id="otp2" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" id="otp3" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" id="otp4" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" id="otp5" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" id="otp6" autocomplete="off">
+                </div>
+                
+                <button type="submit" class="login-btn" id="verifyBtn">
+                    Verify OTP
+                </button>
+            </form>
+            
+            <div class="resend-section">
+                <span>Didn't receive the code? </span>
+                <span class="resend-link" id="resendLink">Resend OTP</span>
+                <div class="timer" id="timer" style="display: none;">
+                    Resend available in <span id="countdown">60</span>s
+                </div>
+            </div>
+            
+            <div class="back-to-login">
+                <a href="/" id="backToLogin">← Back to Login</a>
+            </div>
+            
+            <div class="footer-info">
+                <div class="copyright">
+                    © 2025 LDRP Institute of Technology and Research. All rights reserved
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const tempToken = urlParams.get('token');
+        const maskedEmail = urlParams.get('email');
+
+        // DOM Elements
+        const otpInputs = document.querySelectorAll('.otp-input');
+        const otpForm = document.getElementById('otpForm');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const resendLink = document.getElementById('resendLink');
+        const timer = document.getElementById('timer');
+        const countdown = document.getElementById('countdown');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const emailInfo = document.getElementById('emailInfo');
+        const backToLogin = document.getElementById('backToLogin');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!tempToken) {
+                window.location.href = '/';
+                return;
+            }
+            
+            if (maskedEmail) {
+                emailInfo.textContent = `Verification code sent to ${maskedEmail}`;
+            }
+            
+            setupOTPInputs();
+            startResendTimer();
+        });
+
+        // Setup OTP inputs
+        function setupOTPInputs() {
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    
+                    // Only allow numbers
+                    if (!/^\d$/.test(value)) {
+                        e.target.value = '';
+                        return;
+                    }
+                    
+                    // Add filled class
+                    if (value) {
+                        e.target.classList.add('filled');
+                        // Move to next input
+                        if (index < otpInputs.length - 1) {
+                            otpInputs[index + 1].focus();
+                        }
+                    } else {
+                        e.target.classList.remove('filled');
+                    }
+                    
+                    // Auto-submit when all fields are filled
+                    checkAndSubmit();
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    // Handle backspace
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                        otpInputs[index - 1].value = '';
+                        otpInputs[index - 1].classList.remove('filled');
+                    }
+                    
+                    // Handle paste
+                    if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        navigator.clipboard.readText().then(text => {
+                            const digits = text.replace(/\D/g, '').slice(0, 6);
+                            digits.split('').forEach((digit, i) => {
+                                if (otpInputs[i]) {
+                                    otpInputs[i].value = digit;
+                                    otpInputs[i].classList.add('filled');
+                                }
+                            });
+                            checkAndSubmit();
+                        });
+                    }
+                });
+            });
+            
+            // Focus first input
+            otpInputs[0].focus();
+        }
+
+        // Check if all inputs are filled and auto-submit
+        function checkAndSubmit() {
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            if (otp.length === 6) {
+                setTimeout(() => {
+                    verifyOTP(otp);
+                }, 500);
+            }
+        }
+
+        // Handle form submission
+        otpForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            if (otp.length === 6) {
+                verifyOTP(otp);
+            } else {
+                showErrorMessage('Please enter the complete 6-digit code.');
+            }
+        });
+
+        // Verify OTP
+        async function verifyOTP(otp) {
+            setLoadingState(true);
+            hideMessages();
+            
+            try {
+                const response = await fetch('/api/auth/verify-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        otp: otp,
+                        tempToken: tempToken
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    handleVerificationSuccess(data);
+                } else {
+                    handleVerificationFailure(data.message || 'Invalid OTP. Please try again.');
+                }
+                
+            } catch (error) {
+                console.error('OTP verification error:', error);
+                handleVerificationFailure('Network error. Please check your connection and try again.');
+            }
+            
+            setLoadingState(false);
+        }
+
+        // Handle verification success
+        function handleVerificationSuccess(data) {
+            showSuccessMessage(data.message || 'OTP verified successfully! Redirecting...');
+        
+            // Store authentication data
+            if (data.token) {
+                localStorage.setItem('authToken', data.token);
+                localStorage.setItem('userData', JSON.stringify(data.user));
+            }
+        
+            // Animate success
+            animateSuccess();
+        
+            // Redirect based on user role after 2 seconds
+            setTimeout(() => {
+                const userRole = data.user?.role || 'student';
+                if (userRole === 'admin') {
+                    window.location.href = '/admin-dashboard.html';
+                } else {
+                    window.location.href = '/home.html';
+                }
+            }, 2000);
+        }
+        
+
+        // Handle verification failure
+        function handleVerificationFailure(message) {
+            showErrorMessage(message);
+            clearOTPInputs();
+            animateFailure();
+            otpInputs[0].focus();
+        }
+
+        // Resend OTP
+        resendLink.addEventListener('click', async () => {
+            if (resendLink.classList.contains('disabled')) return;
+            
+            try {
+                const response = await fetch('/api/auth/resend-otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tempToken: tempToken
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    showSuccessMessage('New OTP sent to your email.');
+                    clearOTPInputs();
+                    startResendTimer();
+                } else {
+                    showErrorMessage(data.message || 'Failed to resend OTP. Please try again.');
+                }
+                
+            } catch (error) {
+                console.error('Resend OTP error:', error);
+                showErrorMessage('Network error. Please try again.');
+            }
+        });
+
+        // Start resend timer
+        function startResendTimer() {
+            let timeLeft = 60;
+            resendLink.classList.add('disabled');
+            timer.style.display = 'block';
+            
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                countdown.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    resendLink.classList.remove('disabled');
+                    timer.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        // Utility functions
+        function showErrorMessage(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+
+        function showSuccessMessage(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                verifyBtn.textContent = 'Verifying...';
+                verifyBtn.disabled = true;
+                otpInputs.forEach(input => input.disabled = true);
+            } else {
+                verifyBtn.textContent = 'Verify OTP';
+                verifyBtn.disabled = false;
+                otpInputs.forEach(input => input.disabled = false);
+            }
+        }
+
+        function clearOTPInputs() {
+            otpInputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('filled');
+            });
+        }
+
+        function animateSuccess() {
+            const loginCard = document.querySelector('.login-card');
+            loginCard.style.transform = 'scale(1.05)';
+            loginCard.style.boxShadow = '0 30px 60px rgba(34, 197, 94, 0.3)';
+            
+            setTimeout(() => {
+                loginCard.style.transform = 'scale(1)';
+                loginCard.style.boxShadow = '0 25px 50px rgba(0, 0, 0, 0.25)';
+            }, 300);
+        }
+
+        function animateFailure() {
+            const loginCard = document.querySelector('.login-card');
+            loginCard.style.animation = 'shake 0.5s ease-in-out';
+            
+            setTimeout(() => {
+                loginCard.style.animation = '';
+            }, 500);
+        }
+
+        // Handle back navigation
+        backToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (confirm('Are you sure you want to go back to login? You will need to enter your credentials again.')) {
+                window.location.href = '/';
+            }
+        });
+
+        // Handle browser back button
+        window.addEventListener('popstate', () => {
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>

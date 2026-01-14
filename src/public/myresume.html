@@ -1,0 +1,79 @@
+<!-- Frontend HTML -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Résumé Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="myresume.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <header class="header">
+            <h1>AI Resume Analyzer</h1>
+            <p>Upload your PDF resume for intelligent analysis and insights</p>
+        </header>
+
+        <section class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <!-- SVG: Up arrow over tray -->
+                    <svg width="40" height="40" viewBox="0 0 65 78" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M32.5 55V17M32.5 17L18 31.5M32.5 17L47 31.5" stroke="#6B7280" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="8" y="61" width="49" height="9" rx="4.5" stroke="#6B7280" stroke-width="4"/>
+                    </svg>
+                </div>
+                <div class="upload-text">Upload your Resume</div>
+                <div class="upload-hint">Drag and drop your PDF file here, or click to browse<br>
+                    Maximum file size: 10MB • PDF files only</div>
+            </div>
+            <input type="file" id="fileInput" accept="application/pdf" style="display: none;">
+        </section>
+
+        <div class="main-content hidden" id="mainContent">
+            <div class="progress-bar hidden" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Resume Preview</h2>
+                    <div class="actions">
+                        <button class="btn btn-secondary" id="downloadBtn">
+                            <span style="font-size:1.2em;">&#128190;</span> Download
+                        </button>
+                        <button class="btn btn-secondary" id="printBtn">
+                            <span style="font-size:1.2em;">&#128424;</span> Print
+                        </button>
+                        <button class="btn btn-danger" id="clearBtn">
+                            <span style="font-size:1.2em;">&#128465;</span> Clear
+                        </button>
+                    </div>
+                </div>
+                <!-- Toolbar for PDF controls -->
+                
+                <div class="panel-content">
+                    <canvas id="pdfCanvas" style="width: 100%; height: auto;"></canvas>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title"> AI Analysis Result</h2>
+                </div>
+                <div class="panel-content" id="analysisContent">
+                    <div class="loading" id="analysisLoading">
+                        <div class="loading-spinner"></div>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                            <span style="color: #6b7280; font-size: 1.15em; text-align: center; width: 100%;">Upload a PDF resume to begin AI analysis</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="myresume.js"></script>
+</body>
+</html>

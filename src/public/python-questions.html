@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Interview Questions - PlaceGrad</title>
+    <link rel="stylesheet" href="training.css">
+    <style>
+        .interview-questions-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-card {
+            background-color: #f9f9f9;
+            border-left: 5px solid #004080;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-header h3 {
+            color: #004080;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-header h3::before {
+            content: '❓';
+            margin-right: 10px;
+        }
+
+        .answer {
+            display: none;
+            margin-top: 15px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .question-card.active .answer {
+            display: block;
+        }
+
+        .toggle-icon {
+            font-size: 20px;
+            color: #ccc;
+            transition: transform 0.3s ease;
+        }
+
+        .question-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .interview-questions-header {
+            background-color: #004080;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .interview-questions-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .interview-questions-header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="interview-questions-header">
+        <a href="languages.html" class="back-button">
+            &lt; Back
+        </a>
+        <h1>Python Interview Questions</h1>
+        <p>Top 20 questions to prepare for your Python interview.</p>
+    </header>
+
+    <main class="interview-questions-container">
+        <div class="question-card">
+            <div class="question-header">
+                <h3>1. What is Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Python is a high-level, interpreted, interactive, and object-oriented scripting language. It is a very popular language for web development, data science, machine learning, and automation.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>2. What is PEP 8?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>PEP 8 is a style guide for Python code. It provides conventions for writing clean and readable code, such as indentation, naming conventions, and line length. Following PEP 8 makes your code more consistent and easier for others to read.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>3. What are the key features of Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Python's key features include its simplicity, readability, portability, object-oriented and procedural programming support, extensive standard library, and a vast ecosystem of third-party libraries.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>4. What is the difference between a list and a tuple?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A list is a mutable, ordered sequence of elements, enclosed in square brackets <code>[]</code>. A tuple is an immutable, ordered sequence, enclosed in parentheses <code>()</code>. Once a tuple is created, its elements cannot be changed, added, or removed.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>5. Explain the GIL (Global Interpreter Lock).</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The Global Interpreter Lock (GIL) is a mutex that protects access to Python objects, preventing multiple native threads from executing Python bytecodes at once. This means that while Python's `threading` module can run multiple threads, only one thread can be executing Python code at any given time. The GIL is a major reason why Python is not ideal for CPU-bound tasks in a multi-threaded environment, but it does not affect I/O-bound tasks.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>6. What are decorators in Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A decorator is a design pattern in Python that allows you to add new functionality to an existing function or class without modifying its structure. Decorators are essentially functions that take another function as an argument and return a new function that usually extends the behavior of the original function.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>7. Explain `__init__` in Python.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The <code>__init__</code> method is a special method in Python classes, known as a constructor. It is automatically called when a new object of a class is created. It is used to initialize the state of the object, for example, by setting initial values for instance variables.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>8. What is a generator in Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A generator is a special type of function that returns an iterator, allowing you to iterate over a sequence of values one at a time. Generators use the <code>yield</code> keyword instead of <code>return</code>. They are memory-efficient because they do not store all the values in memory at once, generating them on the fly as needed.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>9. How is memory managed in Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Python's memory management is handled automatically by the Python Memory Manager. The memory is allocated in a private heap, and a garbage collector is used to automatically reclaim memory from objects that are no longer in use.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>10. What is a lambda function?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A lambda function is a small, anonymous function defined with the <code>lambda</code> keyword. It can take any number of arguments but can only have one expression. They are typically used for simple, short-term operations where a full function definition is not necessary.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>11. Explain the difference between `range()` and `xrange()` in Python 2.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>In Python 2, <code>range()</code> returns a list of numbers, which can consume a lot of memory for large ranges. <code>xrange()</code>, on the other hand, returns a generator object that generates numbers on the fly, making it more memory-efficient. In Python 3, <code>range()</code> now behaves like <code>xrange()</code> from Python 2, returning a generator-like object, and <code>xrange()</code> no longer exists.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>12. What is the difference between `.py` and `.pyc` files?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A <code>.py</code> file contains the source code of a Python program. A <code>.pyc</code> file is a compiled bytecode file that is created when the Python interpreter executes a <code>.py</code> file. This bytecode is a low-level representation of the source code that can be executed more quickly on subsequent runs.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>13. What is a dictionary in Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A dictionary is an unordered collection of data values used to store data in key-value pairs. Dictionaries are optimized for retrieving values when the key is known. They are mutable and are defined with curly braces <code>{}</code>.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>14. How do you handle exceptions in Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Exceptions in Python are handled using a <code>try-except</code> block. The code that might raise an error is placed in the <code>try</code> block, and the code to handle the error is placed in the <code>except</code> block. This prevents the program from crashing and allows for graceful error handling.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>15. What is the difference between shallow and deep copy?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A shallow copy creates a new compound object and inserts references to the objects found in the original. It only duplicates the top-level structure, so changes to nested objects are reflected in both copies. A deep copy creates a completely new independent compound object and recursively copies all objects found in the original, so changes to nested objects do not affect the original.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>16. What is the difference between `is` and `==`?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The <code>==</code> operator compares the values of two objects to see if they are equal. The <code>is</code> operator compares the identity of two objects to see if they are the exact same object in memory.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>17. What is a virtual environment?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A virtual environment is a tool that keeps the dependencies required by different projects in separate locations, preventing conflicts. It creates an isolated environment for each project, ensuring that libraries installed for one project do not affect others.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>18. What is the purpose of `self` in a class?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `self` parameter is a reference to the instance of the class. It is used to access variables and methods belonging to the class instance. It is the first argument to any method in a class and must be included, though you can rename it.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>19. How do you write comments in Python?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Single-line comments are created with the `#` symbol. Multi-line comments can be created by placing the text inside triple quotes (either single <code>'''...'''</code> or double <code>"""..."""</code>). These are technically multi-line strings, but they are often used as comments.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>20. What is a docstring?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A docstring (documentation string) is a string literal that occurs as the first statement in a module, function, class, or method definition. It is a way of documenting the code's purpose and functionality. Docstrings are accessible at runtime via the <code>__doc__</code> attribute.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-info">
+        <p>© 2025 LDRP Institute of Technology and Research</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionCards = document.querySelectorAll('.question-card');
+
+            questionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('active');
+
+                    const answer = this.querySelector('.answer');
+                    if (answer.style.display === "block") {
+                        answer.style.display = "none";
+                    } else {
+                        answer.style.display = "block";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

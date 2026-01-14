@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Interview Questions - PlaceGrad</title>
+    <link rel="stylesheet" href="training.css">
+    <style>
+        .interview-questions-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-card {
+            background-color: #f9f9f9;
+            border-left: 5px solid #004080;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-header h3 {
+            color: #004080;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-header h3::before {
+            content: '❓';
+            margin-right: 10px;
+        }
+
+        .answer {
+            display: none;
+            margin-top: 15px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .question-card.active .answer {
+            display: block;
+        }
+
+        .toggle-icon {
+            font-size: 20px;
+            color: #ccc;
+            transition: transform 0.3s ease;
+        }
+
+        .question-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .interview-questions-header {
+            background-color: #004080;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .interview-questions-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .interview-questions-header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <header class="interview-questions-header">
+        <a href="languages.html" class="back-button">
+            &lt; Back
+        </a>
+        <h1>Java Interview Questions</h1>
+        <p>Top 20 questions to prepare for your Java interview.</p>
+    </header>
+
+    <main class="interview-questions-container">
+        <div class="question-card">
+            <div class="question-header">
+                <h3>1. What is Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Java is a high-level, class-based, object-oriented programming language designed to have as few implementation dependencies as possible. It is a general-purpose language intended to let application developers write once, run anywhere (WORA), meaning that compiled Java code can run on all platforms that support Java without the need for recompilation.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>2. What is JVM, JRE, and JDK?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p><strong>JVM (Java Virtual Machine)</strong> is an abstract machine that provides a runtime environment in which Java bytecode can be executed. <strong>JRE (Java Runtime Environment)</strong> is the software package that contains the JVM, class libraries, and other files required to run a Java application. <strong>JDK (Java Development Kit)</strong> is a superset of JRE, containing everything in JRE plus tools for developing Java applications, such as a compiler (javac), debugger, and archiver.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>3. What are the four pillars of OOP in Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The four pillars of OOP are: <strong>Encapsulation</strong> (bundling data and methods into a single unit), <strong>Inheritance</strong> (allowing a class to inherit properties from another class), <strong>Polymorphism</strong> (the ability of an object to take on many forms), and <strong>Abstraction</strong> (hiding complex implementation details from the user).</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>4. What is the difference between `==` and `.equals()`?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `==` operator is used to compare object references (memory addresses) to see if they point to the same object. The `.equals()` method is used to compare the actual content or value of two objects. For primitive data types, `==` is used for value comparison, but for objects, `.equals()` is the correct way to compare their values.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>5. What is method overloading and overriding?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p><strong>Method overloading</strong> occurs when a class has multiple methods with the same name but different parameters (number of arguments or their data types). It is a compile-time polymorphism. <strong>Method overriding</strong> occurs when a subclass provides a specific implementation for a method that is already defined in its superclass. It is a runtime polymorphism.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>6. Explain the concept of a constructor.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A constructor is a special type of method that is used to initialize the state of an object. It is called automatically when an object is created using the `new` keyword. A constructor has the same name as its class and does not have a return type. It can be overloaded to provide multiple ways to create an object.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>7. What is a static keyword in Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `static` keyword can be applied to variables, methods, blocks, and nested classes. A static member belongs to the class itself rather than to any specific instance of the class. This means you can access static members without creating an object of the class.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>8. What is the difference between an abstract class and an interface?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>An **abstract class** can have both abstract and non-abstract methods, can have a constructor, and can contain instance variables. A class can extend only one abstract class. An **interface** can only have abstract methods (in Java 8 and later, it can have default and static methods), cannot have a constructor, and only has static and final variables. A class can implement multiple interfaces.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>9. What is the final keyword?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `final` keyword is used to restrict the user. A `final` variable's value cannot be changed. A `final` method cannot be overridden by subclasses. A `final` class cannot be inherited by other classes.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>10. What is a checked vs. unchecked exception?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A **checked exception** is an exception that is checked at compile-time. The compiler forces the programmer to handle it, either by using a `try-catch` block or by declaring it in the method signature with `throws`. Examples include `IOException` and `SQLException`. An **unchecked exception** is not checked at compile-time and is typically caused by programming errors. Examples include `NullPointerException` and `ArrayIndexOutOfBoundsException`.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>11. What is garbage collection in Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Garbage collection is an automatic memory management process in Java. The Garbage Collector automatically identifies and reclaims memory from objects that are no longer referenced by the program. This frees the programmer from manual memory deallocation, which helps prevent memory leaks.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>12. What are the differences between an Array and an ArrayList?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>An **Array** is a fixed-size, ordered collection of elements of the same data type. Once created, its size cannot be changed. An **ArrayList** is a resizable array implementation of the `List` interface. Its size can grow dynamically as elements are added or removed.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>13. What is a package in Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A package is a mechanism in Java for organizing classes, interfaces, and subpackages. It helps in modularizing the codebase, preventing naming conflicts, and providing access control.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>14. Explain the `this` keyword.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `this` keyword is a reference variable that refers to the current object. It can be used to differentiate between instance variables and local variables with the same name, to invoke the current class's constructor, or to pass the current object as an argument.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>15. What are primitive and non-primitive data types?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>**Primitive data types** are predefined and are not objects. They include `byte`, `short`, `int`, `long`, `float`, `double`, `boolean`, and `char`. **Non-primitive** (or reference) data types are objects created by the programmer or provided by the Java library. They include `String`, `Array`, and classes.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>16. What is a constructor chaining?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Constructor chaining is the process of calling one constructor from another constructor. This is useful when you have multiple constructors and want to avoid redundant code. You can use `this()` to call a constructor in the same class or `super()` to call a constructor of the parent class.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>17. What is a `try-with-resources` statement?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `try-with-resources` statement is a feature introduced in Java 7 that ensures that each resource (such as a file, socket, or database connection) is automatically closed after the `try` block is executed, regardless of whether the block completes normally or throws an exception. This helps prevent resource leaks.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>18. What is the `String` pool in Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The String pool is a special memory area in the heap where Java stores literal strings. When a new string literal is created, the JVM first checks the String pool. If an identical string already exists, it returns a reference to that string. If not, it creates a new string and adds it to the pool. This improves memory efficiency.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>19. What is the difference between a `LinkedList` and an `ArrayList`?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>An `ArrayList` is an array-based implementation of the `List` interface. It provides fast random access but is slow for insertions and deletions in the middle of the list. A `LinkedList` is a doubly-linked list implementation. It is fast for insertions and deletions but slow for random access because it has to traverse the list from the beginning.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>20. What is a `thread` in Java?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A thread is the smallest unit of a process. Java provides a multi-threading feature, which allows multiple threads to run concurrently within a single program. This can be used to perform multiple tasks at the same time, such as a user interface thread and a background data processing thread.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-info">
+        <p>© 2025 LDRP Institute of Technology and Research</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionCards = document.querySelectorAll('.question-card');
+
+            questionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('active');
+
+                    const answer = this.querySelector('.answer');
+                    if (answer.style.display === "block") {
+                        answer.style.display = "none";
+                    } else {
+                        answer.style.display = "block";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

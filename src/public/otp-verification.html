@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - PlaceGrad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #1e40af);
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #1e3a8a;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .logo p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .verification-icon {
+            width: 80px;
+            height: 80px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .verification-icon::before {
+            content: '✉';
+            color: white;
+            font-size: 36px;
+        }
+
+        .title {
+            color: #1e40af;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .email-display {
+            color: #3b82f6;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .otp-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 55px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1f2937;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .otp-input.filled {
+            border-color: #10b981;
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .timer {
+            color: #ef4444;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .timer::before {
+            content: '⏰';
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #6b7280;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .btn-secondary:disabled {
+            color: #9ca3af;
+            border-color: #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #16a34a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .back-link {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #3b82f6;
+        }
+
+        .back-link::before {
+            content: '←';
+        }
+
+        .help-text {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 25px;
+                margin: 10px;
+            }
+            
+            .otp-input {
+                width: 45px;
+                height: 50px;
+                font-size: 18px;
+            }
+            
+            .title {
+                font-size: 22px;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>PlaceGrad</h1>
+            <p>Placement Portal</p>
+        </div>
+
+        <div class="verification-icon"></div>
+        
+        <h2 class="title">Verify Your Email</h2>
+        <p class="subtitle">We've sent a 6-digit verification code to</p>
+        <p class="email-display" id="emailDisplay">Loading...</p>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <form id="otpForm">
+            <div class="form-group">
+                <label>Enter Verification Code</label>
+                <div class="otp-container" id="otpContainer">
+                    <input type="text" class="otp-input" maxlength="1" data-index="0">
+                    <input type="text" class="otp-input" maxlength="1" data-index="1">
+                    <input type="text" class="otp-input" maxlength="1" data-index="2">
+                    <input type="text" class="otp-input" maxlength="1" data-index="3">
+                    <input type="text" class="otp-input" maxlength="1" data-index="4">
+                    <input type="text" class="otp-input" maxlength="1" data-index="5">
+                </div>
+                <div class="timer" id="timer">Code expires in: 10:00</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="verifyBtn">
+                Verify Code
+            </button>
+
+            <button type="button" class="btn btn-secondary" id="resendBtn">
+                Resend Code
+            </button>
+        </form>
+
+        <div class="help-text">
+            Didn't receive the code? Check your spam folder or click resend.
+        </div>
+
+        <a href="/" class="back-link">Back to Login</a>
+    </div>
+
+    <script>
+        class OTPVerification {
+            constructor() {
+                this.tempToken = this.getTempToken();
+                this.email = this.getEmail();
+                this.timerInterval = null;
+                this.timeRemaining = 600; // 10 minutes in seconds
+                
+                this.initializeElements();
+                this.setupEventListeners();
+                this.startTimer();
+                this.displayEmail();
+                
+                // Focus first input
+                this.otpInputs[0].focus();
+            }
+
+            initializeElements() {
+                this.otpForm = document.getElementById('otpForm');
+                this.otpInputs = document.querySelectorAll('.otp-input');
+                this.verifyBtn = document.getElementById('verifyBtn');
+                this.resendBtn = document.getElementById('resendBtn');
+                this.errorMessage = document.getElementById('errorMessage');
+                this.successMessage = document.getElementById('successMessage');
+                this.timer = document.getElementById('timer');
+                this.emailDisplay = document.getElementById('emailDisplay');
+            }
+
+            getTempToken() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token') || localStorage.getItem('tempToken');
+                
+                if (!token) {
+                    this.showError('Session expired. Please login again.');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                    return null;
+                }
+                
+                return token;
+            }
+
+            getEmail() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get('email') || localStorage.getItem('userEmail') || 'your email';
+            }
+
+            displayEmail() {
+                this.emailDisplay.textContent = this.email;
+            }
+
+            setupEventListeners() {
+                // OTP input handling
+                this.otpInputs.forEach((input, index) => {
+                    input.addEventListener('input', (e) => this.handleOTPInput(e, index));
+                    input.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+                    input.addEventListener('paste', (e) => this.handlePaste(e));
+                });
+
+                // Form submission
+                this.otpForm.addEventListener('submit', (e) => this.handleSubmit(e));
+
+                // Resend button
+                this.resendBtn.addEventListener('click', () => this.resendOTP());
+
+                // Clear messages when user starts typing
+                this.otpInputs.forEach(input => {
+                    input.addEventListener('focus', () => this.clearMessages());
+                });
+            }
+
+            handleOTPInput(e, index) {
+                const input = e.target;
+                const value = input.value.replace(/[^0-9]/g, ''); // Only allow numbers
+                
+                input.value = value;
+
+                if (value) {
+                    input.classList.add('filled');
+                    // Move to next input
+                    if (index < this.otpInputs.length - 1) {
+                        this.otpInputs[index + 1].focus();
+                    }
+                } else {
+                    input.classList.remove('filled');
+                }
+
+                // Auto-submit when all inputs are filled
+                this.checkAutoSubmit();
+            }
+
+            handleKeyDown(e, index) {
+                // Handle backspace
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    this.otpInputs[index - 1].focus();
+                    this.otpInputs[index - 1].value = '';
+                    this.otpInputs[index - 1].classList.remove('filled');
+                }
+
+                // Handle arrow keys
+                if (e.key === 'ArrowLeft' && index > 0) {
+                    this.otpInputs[index - 1].focus();
+                }
+                if (e.key === 'ArrowRight' && index < this.otpInputs.length - 1) {
+                    this.otpInputs[index + 1].focus();
+                }
+            }
+
+            handlePaste(e) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text');
+                const numbers = paste.replace(/[^0-9]/g, '').substring(0, 6);
+                
+                if (numbers.length === 6) {
+                    numbers.split('').forEach((digit, index) => {
+                        if (this.otpInputs[index]) {
+                            this.otpInputs[index].value = digit;
+                            this.otpInputs[index].classList.add('filled');
+                        }
+                    });
+                    this.otpInputs[5].focus();
+                    this.checkAutoSubmit();
+                }
+            }
+
+            checkAutoSubmit() {
+                const otp = this.getOTPValue();
+                if (otp.length === 6) {
+                    setTimeout(() => this.verifyOTP(), 500); // Small delay for better UX
+                }
+            }
+
+            getOTPValue() {
+                return Array.from(this.otpInputs).map(input => input.value).join('');
+            }
+
+            async handleSubmit(e) {
+                e.preventDefault();
+                await this.verifyOTP();
+            }
+
+            async verifyOTP() {
+                const otp = this.getOTPValue();
+                
+                if (otp.length !== 6) {
+                    this.showError('Please enter the complete 6-digit code.');
+                    return;
+                }
+
+                if (!this.tempToken) {
+                    this.showError('Session expired. Please login again.');
+                    setTimeout(() => {
+                        const userRole = response.user?.role || 'student';
+                        if (userRole === 'admin') {
+                            window.location.href = '/admin-dashboard.html';
+                        } else {
+                            window.location.href = '/home.html';
+                        }
+                    }, 1500);
+                    return;
+                }
+                
+                this.setLoading(true);
+                this.clearMessages();
+
+                try {
+                    const response = await this.makeRequest('/api/auth/verify-otp', {
+                        otp: otp,
+                        tempToken: this.tempToken
+                    });
+
+                    if (response.success) {
+                        this.showSuccess('Verification successful! Redirecting...');
+                        // Store the JWT token
+                        localStorage.setItem('authToken', response.token);
+                        localStorage.setItem('user', JSON.stringify(response.user));
+                        // Clear temporary data
+                        localStorage.removeItem('tempToken');
+                        localStorage.removeItem('userEmail');
+                        // Redirect to dashboard based on role
+                        setTimeout(() => {
+                            const userRole = response.user?.role || 'student';
+                            if (userRole === 'admin') {
+                                window.location.href = '/admin-dashboard.html';
+                            } else {
+                                window.location.href = '/home.html';
+                            }
+                        }, 1500);
+                    } else {
+                        this.showError(response.message || 'Verification failed. Please try again.');
+                        this.clearOTPInputs();
+                    }
+                } catch (error) {
+                    console.error('Verification error:', error);
+                    this.showError('Network error. Please check your connection and try again.');
+                } finally {
+                    this.setLoading(false);
+                }
+            }
+
+            async resendOTP() {
+                if (!this.tempToken) {
+                    this.showError('Session expired. Please login again.');
+                    return;
+                }
+
+                this.setResendLoading(true);
+                this.clearMessages();
+
+                try {
+                    const response = await this.makeRequest('/api/auth/resend-otp', {
+                        tempToken: this.tempToken
+                    });
+
+                    if (response.success) {
+                        this.showSuccess('New verification code sent to your email.');
+                        this.clearOTPInputs();
+                        this.resetTimer();
+                        this.otpInputs[0].focus();
+                    } else {
+                        this.showError(response.message || 'Failed to resend code. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Resend error:', error);
+                    this.showError('Network error. Please check your connection and try again.');
+                } finally {
+                    this.setResendLoading(false);
+                }
+            }
+
+            async makeRequest(url, data) {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                return await response.json();
+            }
+
+            startTimer() {
+                this.updateTimerDisplay();
+                this.timerInterval = setInterval(() => {
+                    this.timeRemaining--;
+                    this.updateTimerDisplay();
+                    
+                    if (this.timeRemaining <= 0) {
+                        this.handleTimerExpiry();
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timeRemaining / 60);
+                const seconds = this.timeRemaining % 60;
+                const display = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                this.timer.textContent = `Code expires in: ${display}`;
+                
+                if (this.timeRemaining <= 60) {
+                    this.timer.classList.add('pulse');
+                } else {
+                    this.timer.classList.remove('pulse');
+                }
+            }
+
+            resetTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+                this.timeRemaining = 600; // Reset to 10 minutes
+                this.timer.classList.remove('pulse');
+                this.startTimer();
+            }
+
+            handleTimerExpiry() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+                this.timer.textContent = 'Code expired';
+                this.showError('Verification code has expired. Please request a new one.');
+                this.disableVerification();
+            }
+
+            disableVerification() {
+                this.otpInputs.forEach(input => {
+                    input.disabled = true;
+                    input.style.opacity = '0.5';
+                });
+                this.verifyBtn.disabled = true;
+            }
+
+            clearOTPInputs() {
+                this.otpInputs.forEach(input => {
+                    input.value = '';
+                    input.classList.remove('filled');
+                });
+            }
+
+            setLoading(loading) {
+                if (loading) {
+                    this.verifyBtn.disabled = true;
+                    this.verifyBtn.innerHTML = '<span class="loading"></span>Verifying...';
+                } else {
+                    this.verifyBtn.disabled = false;
+                    this.verifyBtn.innerHTML = 'Verify Code';
+                }
+            }
+
+            setResendLoading(loading) {
+                if (loading) {
+                    this.resendBtn.disabled = true;
+                    this.resendBtn.innerHTML = '<span class="loading"></span>Sending...';
+                } else {
+                    this.resendBtn.disabled = false;
+                    this.resendBtn.innerHTML = 'Resend Code';
+                }
+            }
+
+            showError(message) {
+                this.errorMessage.textContent = message;
+                this.errorMessage.style.display = 'block';
+                this.successMessage.style.display = 'none';
+            }
+
+            showSuccess(message) {
+                this.successMessage.textContent = message;
+                this.successMessage.style.display = 'block';
+                this.errorMessage.style.display = 'none';
+            }
+
+            clearMessages() {
+                this.errorMessage.style.display = 'none';
+                this.successMessage.style.display = 'none';
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new OTPVerification();
+        });
+    </script>
+</body>
+</html>

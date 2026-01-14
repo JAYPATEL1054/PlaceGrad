@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Dashboard - AptitudeHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="aptitude.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <a href="aptitude.html" class="logo-link">
+                    <span class="logo-icon">&#129504;</span>
+                    <div class="logo-text-and-tagline">
+                        <span class="logo-text">AptitudeHub</span>
+                        <span class="tagline">Master your aptitude skills with 150+ practice questions</span>
+                    </div>
+                </a>
+            </div>
+
+            <a href="aptitude.html" class="back-to-home-btn">
+                Back to Home
+            </a>
+        </div>
+
+        <div class="performance-content">
+            <h1 class="performance-title">Performance Dashboard</h1>
+            
+            <!-- Summary Statistics -->
+            <div class="performance-stats-grid">
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Total Tests</span>
+                        <span class="stat-value" id="total-tests">0</span>
+                    </div>
+                    <div class="stat-icon">📊</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Average Score</span>
+                        <span class="stat-value" id="average-score">0%</span>
+                    </div>
+                    <div class="stat-icon">📈</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Best Score</span>
+                        <span class="stat-value" id="best-score">0%</span>
+                    </div>
+                    <div class="stat-icon">🏆</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <span class="stat-label">Total Practice Time</span>
+                        <span class="stat-value" id="total-practice-time">0h 0m</span>
+                    </div>
+                    <div class="stat-icon">⏱️</div>
+                </div>
+            </div>
+            
+            <!-- Category Performance -->
+            <div class="category-performance-section">
+                <h3 class="section-title">Performance by Category</h3>
+                <div class="category-stats-grid" id="category-stats-grid">
+                    <!-- Category stats will be populated here -->
+                </div>
+            </div>
+            
+            <!-- Recent Test History -->
+            <div class="recent-history-section">
+                <h3 class="section-title">Recent Test History</h3>
+                <div class="history-controls">
+                    <button id="clear-history-btn" class="action-btn secondary">Clear History</button>
+                    <button id="export-history-btn" class="action-btn secondary">Export Data</button>
+                </div>
+                <div class="history-list-container">
+                    <ul id="history-list">
+                        <!-- History items will be populated here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get DOM elements
+            const historyList = document.getElementById('history-list');
+            const totalTestsEl = document.getElementById('total-tests');
+            const averageScoreEl = document.getElementById('average-score');
+            const bestScoreEl = document.getElementById('best-score');
+            const totalPracticeTimeEl = document.getElementById('total-practice-time');
+            const categoryStatsGrid = document.getElementById('category-stats-grid');
+            const clearHistoryBtn = document.getElementById('clear-history-btn');
+            const exportHistoryBtn = document.getElementById('export-history-btn');
+
+            // Load and display performance data
+            function loadPerformanceData() {
+                const history = JSON.parse(localStorage.getItem('testHistory')) || [];
+                
+                if (history.length > 0) {
+                    // Update summary stats
+                    totalTestsEl.textContent = history.length;
+
+                    // Calculate average score
+                    const scores = history.map(h => parseInt(h.score));
+                    const avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+                    averageScoreEl.textContent = avgScore + '%';
+
+                    // Find best score
+                    const bestScore = Math.max(...scores);
+                    bestScoreEl.textContent = bestScore + '%';
+
+                    // Calculate total practice time
+                    const totalSeconds = history.reduce((sum, h) => sum + (h.timeSpent || 0), 0);
+                    const hours = Math.floor(totalSeconds / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    totalPracticeTimeEl.textContent = `${hours}h ${minutes}m`;
+
+                    // Generate category performance stats
+                    generateCategoryStats(history);
+
+                    // Render recent history
+                    renderHistoryList(history);
+                } else {
+                    // No history available
+                    totalTestsEl.textContent = '0';
+                    averageScoreEl.textContent = '0%';
+                    bestScoreEl.textContent = '0%';
+                    totalPracticeTimeEl.textContent = '0h 0m';
+                    categoryStatsGrid.innerHTML = '<p>No test data available. Take a test to see your performance here.</p>';
+                    historyList.innerHTML = '<li><p>No test history available. Take a test to see your results here.</p></li>';
+                }
+            }
+
+            // Generate category performance statistics
+            function generateCategoryStats(history) {
+                const categoryStats = {};
+                
+                // Group tests by category
+                history.forEach(test => {
+                    if (!categoryStats[test.category]) {
+                        categoryStats[test.category] = {
+                            count: 0,
+                            totalScore: 0,
+                            totalTime: 0,
+                            bestScore: 0
+                        };
+                    }
+                    
+                    categoryStats[test.category].count++;
+                    categoryStats[test.category].totalScore += parseInt(test.score);
+                    categoryStats[test.category].totalTime += (test.timeSpent || 0);
+                    categoryStats[test.category].bestScore = Math.max(categoryStats[test.category].bestScore, parseInt(test.score));
+                });
+
+                // Generate HTML for category stats
+                categoryStatsGrid.innerHTML = '';
+                Object.entries(categoryStats).forEach(([category, stats]) => {
+                    const avgScore = Math.round(stats.totalScore / stats.count);
+                    const avgTime = Math.floor(stats.totalTime / stats.count / 60);
+                    
+                    const categoryCard = document.createElement('div');
+                    categoryCard.className = 'category-stat-card';
+                    categoryCard.innerHTML = `
+                        <h4>${category}</h4>
+                        <div class="category-stat-details">
+                            <div class="category-stat-item">
+                                <span class="stat-label">Tests Taken:</span>
+                                <span class="stat-value">${stats.count}</span>
+                            </div>
+                            <div class="category-stat-item">
+                                <span class="stat-label">Average Score:</span>
+                                <span class="stat-value">${avgScore}%</span>
+                            </div>
+                            <div class="category-stat-item">
+                                <span class="stat-label">Best Score:</span>
+                                <span class="stat-value">${stats.bestScore}%</span>
+                            </div>
+                            <div class="category-stat-item">
+                                <span class="stat-label">Avg Time:</span>
+                                <span class="stat-value">${avgTime}m</span>
+                            </div>
+                        </div>
+                    `;
+                    categoryStatsGrid.appendChild(categoryCard);
+                });
+            }
+
+            // Render history list
+            function renderHistoryList(history) {
+                historyList.innerHTML = '';
+                
+                // Show most recent tests first (already sorted by unshift in submitTest)
+                history.slice(0, 10).forEach((item, index) => {
+                    const listItem = document.createElement('li');
+                    const minutesSpent = Math.floor((item.timeSpent || 0) / 60);
+                    const secondsSpent = (item.timeSpent || 0) % 60;
+                    
+                    // Determine score color based on performance
+                    let scoreClass = 'score-average';
+                    if (item.score >= 80) scoreClass = 'score-excellent';
+                    else if (item.score >= 60) scoreClass = 'score-good';
+                    else if (item.score < 40) scoreClass = 'score-poor';
+                    
+                    listItem.innerHTML = `
+                        <div class="history-item-header">
+                            <span class="history-item-number">#${index + 1}</span>
+                            <span class="history-item-date">${item.date}</span>
+                        </div>
+                        <div class="history-item-details">
+                            <div class="history-item-category">
+                                <span class="history-item-label">Category:</span>
+                                <span class="category-name">${item.category}</span>
+                            </div>
+                        </div>
+                        <div class="history-item-stats">
+                            <div class="history-stat-item">
+                                <span class="history-item-label">Score</span>
+                                <span class="history-item-value ${scoreClass}">${item.score}%</span>
+                            </div>
+                            <div class="history-stat-item">
+                                <span class="history-item-label">Questions</span>
+                                <span class="history-item-value">${item.totalQuestions}</span>
+                            </div>
+                            <div class="history-stat-item">
+                                <span class="history-item-label">Correct</span>
+                                <span class="history-item-value correct-value">${item.correctAnswers}</span>
+                            </div>
+                            <div class="history-stat-item">
+                                <span class="history-item-label">Time</span>
+                                <span class="history-item-value time-value">${minutesSpent}:${secondsSpent.toString().padStart(2, '0')}</span>
+                            </div>
+                            <div class="history-stat-item">
+                                <span class="history-item-label">Status</span>
+                                <span class="history-item-value status-value">${item.status}</span>
+                            </div>
+                        </div>
+                    `;
+                    historyList.appendChild(listItem);
+                });
+            }
+
+            // Clear history functionality
+            clearHistoryBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear all test history? This action cannot be undone.')) {
+                    localStorage.removeItem('testHistory');
+                    localStorage.removeItem('currentTestResult');
+                    loadPerformanceData();
+                    alert('Test history cleared successfully!');
+                }
+            });
+
+            // Export history functionality
+            exportHistoryBtn.addEventListener('click', () => {
+                const history = JSON.parse(localStorage.getItem('testHistory')) || [];
+                if (history.length === 0) {
+                    alert('No test history to export.');
+                    return;
+                }
+
+                // Convert to CSV format
+                const csvContent = [
+                    ['Date', 'Category', 'Score', 'Total Questions', 'Correct Answers', 'Time Spent (seconds)', 'Status'],
+                    ...history.map(test => [
+                        test.date,
+                        test.category,
+                        test.score + '%',
+                        test.totalQuestions,
+                        test.correctAnswers,
+                        test.timeSpent,
+                        test.status
+                    ])
+                ].map(row => row.join(',')).join('\n');
+
+                // Create and download CSV file
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `aptitude-test-history-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            });
+
+            // Load performance data on page load
+            loadPerformanceData();
+        });
+    </script>
+</body>
+</html>

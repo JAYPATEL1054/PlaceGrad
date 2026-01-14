@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AptitudeHub - Result</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="aptitude.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-section">
+                <a href="aptitude.html" class="logo-link">
+                    <span class="logo-icon">&#129504;</span>
+                    <div class="logo-text-and-tagline">
+                        <span class="logo-text">AptitudeHub</span>
+                        <span class="tagline">Master your aptitude skills</span>
+                    </div>
+                </a>
+            </div>
+            </div>
+            
+            <div class="result-header">
+                <h2>Test Completed!</h2>
+            </div>
+
+            <div class="result-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="total-questions-stat">0</span>
+                    <span class="stat-label">Total Questions</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="correct-answers-stat">0</span>
+                    <span class="stat-label">Correct Answers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="incorrect-answers-stat">0</span>
+                    <span class="stat-label">Incorrect Answers</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="time-spent-stat">0m 0s</span>
+                    <span class="stat-label">Time Spent</span>
+                </div>
+            </div>        
+            
+             
+                <div class="final-score">
+                    Your Score:
+                    <span id="final-score-percentage">0%</span>
+                </div>
+            
+
+            <div class="result-actions">
+    <button id="review-answers-btn" class="action-btn secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M480-320q75 0 127.5-52.5T660-500q0-75-52.5-127.5T480-680q-75 0-127.5 52.5T300-500q0 75 52.5 127.5T480-320Zm0-72q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29Zm0 192q-146 0-266-81.5T40-500q54-137 174-218.5T480-800q146 0 266 81.5T920-500q-54 137-174 218.5T480-200Zm0-300Zm0 220q113 0 207.5-59.5T832-500q-50-101-144.5-160.5T480-720q-113 0-207.5 59.5T128-500q50 101 144.5 160.5T480-280Z"/></svg>
+        Review Answers
+    </button>
+ 
+
+
+    <a href="aptitude.html" id="new-test-btn" class="action-btn secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+        New Test
+    </a>
+</div>
+        </div>
+    </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Retrieve the test result data from localStorage
+        const testResult = JSON.parse(localStorage.getItem('currentTestResult'));
+
+        // Check if there is data to display
+        if (testResult) {
+            // Update the main score and stats
+            document.getElementById('final-score-percentage').textContent = testResult.score + '%';
+            document.getElementById('total-questions-stat').textContent = testResult.totalQuestions;
+            document.getElementById('correct-answers-stat').textContent = testResult.correctAnswers;
+            document.getElementById('incorrect-answers-stat').textContent = testResult.incorrectAnswers;
+            
+            // Format time spent (e.g., from 750 seconds to 12:30)
+            const minutes = Math.floor(testResult.timeSpent / 60);
+            const seconds = testResult.timeSpent % 60;
+            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('time-spent-stat').textContent = formattedTime;
+
+            // Update the charts data (if you are using charts)
+            document.getElementById('analysis-accuracy').textContent = testResult.score + '%';
+            
+
+
+
+        } else {
+            console.error('No test result data found in localStorage.');
+            // You can optionally redirect the user or show a message if no data exists.
+        }
+        // This code should be in the test completion logic, not here
+        // Remove duplicate testResult creation
+
+
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceGrad - Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Background Image and Overlay -->
+    <div class="tp-bgimg"></div>
+    <div class="overlay"></div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <a href="home.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Home</a>
+        <br>
+        <br>
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">PlaceGrad</h2>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li>
+                    <a href="#" class="active">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="companies.html">
+                        <i class="fas fa-building"></i>
+                        <span>Upcoming Companies</span>
+                    </a>
+                <li>
+                    <a href="resume.html">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Resume Builder</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="aptitude.html">
+                        <i class="fas fa-brain"></i>
+                        <span>Aptitude Test Practice</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="training.html" style="white-space: nowrap; display: flex; align-items: center; gap: 1px;">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Technical Questions Practice</span>
+                    </a>
+                    </li>
+            </ul>
+        </nav>
+    </div>
+    
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" id="menu-toggle" style="display: none;">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <!-- Centered Institute Header -->
+        <div class="top-header">
+            <img src="https://www.ldrp.ac.in/wp-content/uploads/LDRP-logo-3.png" alt="LDRP Logo" class="header-logo">
+           
+        </div>
+        
+        <div class="profile-section">
+            <div class="profile-dropdown">
+                <button class="profile-btn">
+                    <img src="https://ui-avatars.com/api/?name=Loading&background=0D8ABC&color=fff&size=200&bold=true" alt="Profile" class="profile-img">
+                    <span>Loading...</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="profile-dropdown-content">
+                    <a href="profile.html"><i class="fas fa-user"></i> View Profile</a>
+                    <a href="myresume.html"><i class="fas fa-file-alt"></i> My Resume Analysis</a>
+                    <a href="login.html" id="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Student Dashboard</h1>
+            <p class="dashboard-subtitle">Welcome to your placement portal dashboard</p>
+        </div>
+        
+        <div class="dashboard-cards">
+            <div class="card">
+                <h3 class="card-title">Placement Statistics <button onclick="fetchPlacementStats()" style="float: right; padding: 5px 10px; cursor: pointer;">🔄 Refresh</button></h3>
+                <div class="card-content" id="placement-stats">
+                    <p>Total Companies Visited: <span id="companies-visited">Loading...</span></p>
+                    <p>Students Placed: <span id="students-placed">Loading...</span></p>
+                    <p>Highest Package: ₹<span id="highest-package">Loading...</span> LPA</p>
+                    <p>Average Package: ₹<span id="average-package">Loading...</span> LPA</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">Upcoming Events</h3>
+                <div class="card-content">
+                    <p><strong>May 15:</strong> TCS Pre-Placement Talk</p>
+                    <p><strong>May 18:</strong> Resume Building Workshop</p>
+                    <p><strong>May 22:</strong> Mock Interview Session</p>
+                    <p><strong>May 25:</strong> Infosys Recruitment Drive</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">Your Application Status</h3>
+                <div class="card-content">
+                    <p><strong>TCS:</strong> Shortlisted for Interview</p>
+                    <p><strong>Infosys:</strong> Applied</p>
+                    <p><strong>Wipro:</strong> Resume Submitted</p>
+                    <p><strong>Accenture:</strong> Selected</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Include the user authentication script -->
+    <script src="user-profile.js"></script>
+    <script>
+        // Fetch and display placement statistics
+        async function fetchPlacementStats() {
+            // Add cache-busting parameter
+            const timestamp = new Date().getTime();
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                console.log('Fetching placement stats with token:', token);
+                const response = await fetch(`/api/placement-stats/current?t=${timestamp}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                console.log('API Response:', response);
+                const data = await response.json();
+                console.log('API Data:', data);
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to fetch placement statistics');
+                }
+
+                if (data.success && data.stats) {
+                    document.getElementById('companies-visited').textContent = data.stats.totalCompaniesVisited || 'N/A';
+                    document.getElementById('students-placed').textContent = data.stats.studentsPlaced || 'N/A';
+                    document.getElementById('highest-package').textContent = data.stats.highestPackage || 'N/A';
+                    document.getElementById('average-package').textContent = data.stats.averagePackage || 'N/A';
+                } else {
+                    throw new Error('Invalid data format received from server');
+                }
+            } catch (error) {
+                console.error('Error fetching placement statistics:', error);
+                const errorMessage = error.message || 'Failed to load statistics';
+                
+                // Show error state in the UI with more informative message
+                const errorElements = ['companies-visited', 'students-placed', 'highest-package', 'average-package'];
+                errorElements.forEach(id => {
+                    document.getElementById(id).textContent = 'N/A';
+                });
+                
+                // You might want to show a toast or notification with the error message
+                alert('Failed to load placement statistics: ' + errorMessage);
+            }
+        }
+
+        // Initialize dashboard functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fetch placement statistics
+            fetchPlacementStats();
+
+            // Mobile menu toggle functionality
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidebar = document.getElementById('sidebar');
+            
+            // Check if screen is mobile size
+            function checkScreenSize() {
+                if (window.innerWidth <= 480) {
+                    menuToggle.style.display = 'block';
+                } else {
+                    menuToggle.style.display = 'none';
+                    sidebar.classList.remove('active');
+                }
+            }
+            
+            // Toggle sidebar on mobile
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Initial check and add resize listener
+            checkScreenSize();
+            window.addEventListener('resize', checkScreenSize);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AptitudeHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="aptitude.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <div class="container">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <br>
+        <div class="header">
+            <div class="logo-section">
+                <a href="aptitude.html" class="logo-link">
+                    <span class="logo-icon">&#129504;</span>
+                    <div class="logo-text-and-tagline">
+                        <span class="logo-text">AptitudeHub</span>
+                        <span class="tagline">Master your aptitude skills with 150 practice questions</span>
+                    </div>
+                </a>
+            </div>
+            <a href="performance.html" class="my-performance-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M16 11V3H8v8H2v10h20V11h-6zm-6-6h4v6h-4V5zm-6 8h4v6H4v-6zm16 6h-4v-6h4v6z"/>
+                </svg>
+                My Performance
+            </a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-card-icon icon-gold">&#127942;</span>
+                <div class="stat-card-value">150+</div>
+                <div class="stat-card-label">Practice Questions</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-icon icon-green">&#127919;</span>
+                <div class="stat-card-value">5</div>
+                <div class="stat-card-label">Categories Available</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-card-icon icon-blue">&#128337;</span>
+                <div class="stat-card-value">20 min</div>
+                <div class="stat-card-label">Per Practice Test</div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="section-title">Choose Your Practice Category</h2>
+            <div class="category-grid">
+                <div class="category-card">
+                    <div class="category-icon-wrapper icon-blue-bg">
+                        <span class="category-icon">&#129504;</span>
+                    </div>
+                    <h3 class="category-title">Logical Reasoning</h3>
+                    <p class="category-description">Patterns, sequences, and logical deduction</p>
+                    <div class="category-details">
+                        <p>Questions Available: <span>30</span></p>
+                        <p>Time Limit: <span>20 minutes</span></p>
+                    </div>
+                    <button class="start-test-btn" data-category="Logical Reasoning">Start Practice Test</button>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon-wrapper icon-green-bg">
+                        <span class="category-icon">&#127919;</span>
+                    </div>
+                    <h3 class="category-title">Quantitative Aptitude</h3>
+                    <p class="category-description">Mathematics, data interpretation, and calculations</p>
+                    <div class="category-details">
+                        <p>Questions Available: <span>30</span></p>
+                        <p>Time Limit: <span>20 minutes</span></p>
+                    </div>
+                    <button class="start-test-btn" data-category="Quantitative Aptitude">Start Practice Test</button>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon-wrapper icon-purple-bg">
+                        <span class="category-icon">&#128218;</span>
+                    </div>
+                    <h3 class="category-title">Verbal Ability</h3>
+                    <p class="category-description">Reading comprehension, grammar, and vocabulary</p>
+                    <div class="category-details">
+                        <p>Questions Available: <span>30</span></p>
+                        <p>Time Limit: <span>20 minutes</span></p>
+                    </div>
+                    <button class="start-test-btn" data-category="Verbal Ability">Start Practice Test</button>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon-wrapper icon-orange-bg">
+                        <span class="category-icon">&lt;/&gt;</span>
+                    </div>
+                    <h3 class="category-title">Programming Concepts</h3>
+                    <p class="category-description">Data structures, algorithms, and programming fundamentals</p>
+                    <div class="category-details">
+                        <p>Questions Available: <span>30</span></p>
+                        <p>Time Limit: <span>20 minutes</span></p>
+                    </div>
+                    <button class="start-test-btn" data-category="Programming Concepts">Start Practice Test</button>
+                </div>
+
+                <div class="category-card">
+                    <div class="category-icon-wrapper icon-teal-bg">
+                        <span class="category-icon">&#128187;</span>
+                    </div>
+                    <h3 class="category-title">Database & SQL</h3>
+                    <p class="category-description">SQL queries, database concepts, and data management</p>
+                    <div class="category-details">
+                        <p>Questions Available: <span>30</span></p>
+                        <p>Time Limit: <span>20 minutes</span></p>
+                    </div>
+                    <button class="start-test-btn" data-category="Database & SQL">Start Practice Test</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="quick-actions-section">
+            <h2 class="section-title">Quick Actions</h2>
+            <div class="quick-actions-grid">
+                <button class="action-btn" data-category="Mixed Practice Test">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm-36-220q-33 0-56.5-23.5T364-480q0-33 23.5-56.5T444-560h72q33 0 56.5 23.5T596-480q0 33-23.5 56.5T516-400h-72Zm-84 80q-17 0-28.5-11.5T344-400q0-17 11.5-28.5T384-440h32v-40h-32q-17 0-28.5-11.5T344-520q0-17 11.5-28.5T384-560h132q50 0 85 35t35 85q0 50-35 85t-85 35H408Zm72-80Zm0 0Z"/></svg>
+                    Mixed Practice Test (All Categories)
+                </button>
+                <a href="performance.html" class="action-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor"><path d="M160-200v-560h640v560H160Zm0 80q-33 0-56.5-23.5T80-200v-560q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v560q0 33-23.5 56.5T800-120H160Zm80-80h480v-400H240v400Zm0-400v-160h480v160H240Z"/></svg>
+                    View Performance Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="aptitude.js"></script>
+</body>
+</html>

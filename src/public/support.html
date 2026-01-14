@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlaceGrad - Support</title>
+    <link rel="stylesheet" href="support.css">
+</head>
+<body>
+    <!-- Background Image -->
+    <div class="tp-bgimg"></div>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Header Section -->
+    <header class="top-header">
+        <div class="logo-container-top">
+            <img src="https://www.ldrp.ac.in/wp-content/uploads/LDRP-logo-3.png" alt="LDRP Logo" class="top-logo">
+        </div>
+        <nav class="main-nav">
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="companies.html">Companies</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="support.html" class="active">Support</a></li>
+                <li><a href="login.html">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Title -->
+        <div class="page-title">
+            <h1>Support Center</h1>
+            <p>Get help with placements, technical issues, and career guidance. We're here to support your journey to success.</p>
+        </div>
+
+        <!-- Emergency Support -->
+        <div class="emergency-support">
+            <h3>🚨 Need Immediate Help?</h3>
+            <p>For urgent placement or technical issues, contact us immediately:</p>
+            <p><strong>Emergency Hotline: +91-9876543210</strong></p>
+            <p><strong>Email: emergency@placegrad.ldrp.ac.in</strong></p>
+        </div>
+
+        <!-- Support Options Grid -->
+        <div class="support-grid">
+            <!-- Placement Support -->
+            <div class="support-card">
+                <h3>🎯 Placement Support</h3>
+                <p>Get help with job applications, interview preparation, resume building, and placement-related queries.</p>
+                <div class="contact-info">
+                    <p><strong>Placement Officer:</strong> Dr. Rajesh Patel</p>
+                    <p><strong>Phone:</strong> <a href="tel:+919876543211">+91-9876543211</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:placements@ldrp.ac.in">placements@ldrp.ac.in</a></p>
+                    <p><strong>Office Hours:</strong> Mon-Fri, 9:00 AM - 5:00 PM</p>
+                </div>
+            </div>
+
+            <!-- Technical Support -->
+            <div class="support-card">
+                <h3>💻 Technical Support</h3>
+                <p>Having trouble with the portal? Get assistance with login issues, password reset, profile updates, and other technical problems.</p>
+                <div class="contact-info">
+                    <p><strong>IT Support Team</strong></p>
+                    <p><strong>Phone:</strong> <a href="tel:+919876543212">+91-9876543212</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:support@placegrad.ldrp.ac.in">support@placegrad.ldrp.ac.in</a></p>
+                    <p><strong>Response Time:</strong> Within 2 hours</p>
+                </div>
+            </div>
+
+            <!-- Career Counseling -->
+            <div class="support-card">
+                <h3>🎓 Career Counseling</h3>
+                <p>Get personalized career guidance, skill development advice, and industry insights from our experienced counselors.</p>
+                <div class="contact-info">
+                    <p><strong>Career Counselor:</strong> Ms. Priya Sharma</p>
+                    <p><strong>Phone:</strong> <a href="tel:+919876543213">+91-9876543213</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:counseling@ldrp.ac.in">counseling@ldrp.ac.in</a></p>
+                    <p><strong>Appointments:</strong> Mon-Fri, by appointment only</p>
+                </div>
+            </div>
+
+            <!-- Training & Workshops -->
+            <div class="support-card">
+                <h3>📚 Training & Workshops</h3>
+                <p>Information about upcoming training sessions, workshops, mock interviews, and skill development programs.</p>
+                <div class="contact-info">
+                    <p><strong>Training Coordinator:</strong> Prof. Amit Kumar</p>
+                    <p><strong>Phone:</strong> <a href="tel:+919876543214">+91-9876543214</a></p>
+                    <p><strong>Email:</strong> <a href="mailto:training@ldrp.ac.in">training@ldrp.ac.in</a></p>
+                    <p><strong>Schedule:</strong> Check portal for upcoming sessions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form">
+            <h3 style="color: #00c3ff; text-align: center; margin-bottom: 2rem;">Submit a Support Request</h3>
+            <form id="supportForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name *</label>
+                        <input type="text" id="firstName" name="firstName" required placeholder="Enter your first name">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name *</label>
+                        <input type="text" id="lastName" name="lastName" required placeholder="Enter your last name">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" required placeholder="your.email@ldrp.ac.in">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+91-XXXXXXXXXX">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studentId">Student ID</label>
+                        <input type="text" id="studentId" name="studentId" placeholder="Enter your student ID">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Support Category *</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="placement">Placement Support</option>
+                            <option value="technical">Technical Issues</option>
+                            <option value="career">Career Counseling</option>
+                            <option value="training">Training & Workshops</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" name="subject" required placeholder="Brief description of your issue">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" rows="6" required placeholder="Please provide detailed information about your request or issue..."></textarea>
+                </div>
+
+                <div style="text-align: center;">
+                    <button type="submit" class="btn">Submit Request</button>
+                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section">
+            <h2 class="faq-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>How do I reset my password?</h4>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Go to the login page and click on "Forgot Password". Enter your registered email address, and you'll receive a password reset link within a few minutes. Follow the link to create a new password.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>How do I update my profile information?</h4>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Navigate to the Profile section after logging in. Click on "Edit Profile" to update your personal information, academic details, skills, and resume. Make sure to save your changes before exiting.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>When are placement drives scheduled?</h4>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Placement drives are typically scheduled from January to April for final year students. Check the Companies section and Dashboard for real-time updates on upcoming drives and application deadlines.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>What documents do I need for placements?</h4>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>You'll need: Updated resume (PDF format), All academic transcripts, Identity proof (Aadhar/Passport), Recent passport-size photographs, and any relevant certificates or portfolios.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>How can I prepare for technical interviews?</h4>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Access our Training Materials section for practice questions, mock interviews, and technical resources. Attend workshops regularly and consider one-on-one sessions with our career counselors.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <h4>Can I apply to multiple companies?</h4>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, you can apply to multiple companies unless there are specific restrictions mentioned in the job posting. However, if you receive an offer, you must inform the placement office immediately.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-info">
+        <div class="copyright">
+            © 2025 LDRP Institute of Technology and Research. All rights reserved.
+        </div>
+        <div class="footer-links">
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Terms of Service</a>
+            <a href="#" class="footer-link">Support</a>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const toggle = element.querySelector('.faq-toggle');
+            
+            // Close all other FAQ items
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                if (item !== answer) {
+                    item.classList.remove('active');
+                }
+            });
+            
+            document.querySelectorAll('.faq-toggle').forEach(item => {
+                if (item !== toggle) {
+                    item.textContent = '+';
+                    item.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Toggle current FAQ item
+            answer.classList.toggle('active');
+            
+            if (answer.classList.contains('active')) {
+                toggle.textContent = '−';
+                toggle.style.transform = 'rotate(180deg)';
+            } else {
+                toggle.textContent = '+';
+                toggle.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('supportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Simulate form submission
+            alert('Thank you for your support request! We have received your message and will respond within 24 hours. A confirmation email has been sent to ' + data.email);
+            
+            // Reset form
+            this.reset();
+        });
+
+        // Auto-resize textarea
+        document.getElementById('message').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    </script>
+</body>
+</html>

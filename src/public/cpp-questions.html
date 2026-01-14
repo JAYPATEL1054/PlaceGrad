@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C++ Interview Questions - PlaceGrad</title>
+    <link rel="stylesheet" href="training.css">
+    <style>
+        .interview-questions-container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-card {
+            background-color: #f9f9f9;
+            border-left: 5px solid #004080;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-header h3 {
+            color: #004080;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .question-header h3::before {
+            content: '❓';
+            margin-right: 10px;
+        }
+
+        .answer {
+            display: none;
+            margin-top: 15px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .question-card.active .answer {
+            display: block;
+        }
+
+        .toggle-icon {
+            font-size: 20px;
+            color: #ccc;
+            transition: transform 0.3s ease;
+        }
+
+        .question-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .interview-questions-header {
+            background-color: #004080;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            position: relative; /* Needed for positioning the back button */
+        }
+
+        .interview-questions-header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .interview-questions-header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s;
+        }
+
+        .back-button:hover {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="interview-questions-header">
+        <a href="languages.html" class="back-button">
+            &lt; Back
+        </a>
+        <h1>C++ Interview Questions</h1>
+        <p>Top 20 questions to prepare for your C++ interview.</p>
+    </header>
+
+    <main class="interview-questions-container">
+        <div class="question-card">
+            <div class="question-header">
+                <h3>1. What is C++?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>C++ is a powerful, general-purpose, object-oriented programming language. It is an extension of the C language and is widely used in systems programming, game development, high-performance computing, and embedded systems.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>2. What is the difference between C and C++?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>C is a procedural language, while C++ is an object-oriented language. C++ supports key OOP concepts like classes, objects, inheritance, polymorphism, and encapsulation, which are not available in C. C++ also has a richer standard library.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>3. Explain the four pillars of OOP in C++.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The four pillars are: <strong>Encapsulation</strong> (binding data and methods into a single unit), <strong>Inheritance</strong> (creating a new class from an existing one), <strong>Polymorphism</strong> (the ability of a single function or operator to act on different data types), and <strong>Abstraction</strong> (hiding complex implementation details).</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>4. What is the difference between `new` and `malloc()`?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `new` operator is a C++ keyword that allocates memory for an object and calls its constructor. `malloc()` is a C library function that only allocates raw memory; it does not call the constructor. `new` returns a typed pointer, whereas `malloc()` returns a `void*` pointer that must be cast. Memory allocated with `new` must be freed with `delete`, while `malloc()` requires `free()`.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>5. Explain the concept of a pointer in C++.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A pointer is a variable that stores the memory address of another variable. Pointers are used for dynamic memory allocation, to pass large objects to functions efficiently, and for implementing data structures like linked lists.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>6. What is a virtual function?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A virtual function is a member function in a base class that you expect to redefine in a derived class. By declaring a function virtual, you enable dynamic polymorphism, where the function to be called is determined at runtime based on the object's type.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>7. What is the difference between a class and a struct?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>In C++, the main difference is the default access specifier. Members of a `class` are `private` by default, while members of a `struct` are `public` by default. Structs are generally used for simple data-only structures, while classes are used for more complex objects with both data and behavior.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>8. What is a destructor?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A destructor is a special member function that is automatically called when an object is destroyed. It is used to deallocate memory and perform any necessary cleanup for the object before it is removed from memory.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>9. What is a copy constructor?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A copy constructor is a special constructor that creates a new object as a copy of an existing object. It is called when an object is passed by value to a function or returned by value from a function. It is important for performing a deep copy to prevent issues with shared pointers.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>10. What is a smart pointer?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A smart pointer is an object that behaves like a pointer but provides automatic memory management. It is a class that wraps a raw pointer, and when the smart pointer goes out of scope, it automatically deallocates the memory it points to, preventing memory leaks.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>11. Explain the `const` keyword.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The `const` keyword is used to specify that a variable's value cannot be changed. It can be used with variables, function arguments, function return types, and member functions to ensure that data is not modified accidentally.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>12. What is the Standard Template Library (STL)?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>The STL is a set of C++ template classes and functions that provide common data structures and algorithms. It includes containers (like `vector`, `list`, `map`), iterators, algorithms (like `sort`, `find`), and function objects, making it a powerful and reusable library.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>13. What is a namespace?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A namespace is a feature that provides a way to group related identifiers (like classes, functions, and variables) to avoid naming conflicts. It creates a declarative region and ensures that names inside the namespace do not clash with names in other parts of the code.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>14. What is a friend function and a friend class?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A **friend function** is a non-member function that is granted access to the `private` and `protected` members of a class. A **friend class** is a class whose member functions are all friend functions of another class, giving it access to the other class's private members.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>15. What is the difference between `public`, `private`, and `protected`?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>These are access specifiers. **`public`** members are accessible from anywhere. **`private`** members are only accessible from within the same class. **`protected`** members are accessible within the same class and by its derived classes.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>16. What is operator overloading?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Operator overloading is a C++ feature that allows you to redefine how standard operators (like `+`, `-`, `*`) behave when applied to user-defined data types. This allows for more intuitive and readable code.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>17. What is a pure virtual function?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A pure virtual function is a virtual function in a base class that has no implementation in the base class. It is declared by placing `= 0` at the end of the function declaration. A class that contains a pure virtual function is called an abstract class, and it cannot be instantiated.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>18. Explain exception handling in C++.</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>Exception handling is a mechanism to handle runtime errors. It is implemented using `try`, `throw`, and `catch` blocks. The code that might throw an exception is placed in a `try` block, an exception is `throw`n when an error occurs, and it is handled by a `catch` block.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>19. What is a constructor and a destructor?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A **constructor** is a special member function that initializes a new object of a class. It is called automatically when an object is created. A **destructor** is a special member function that is called when an object is destroyed. It is used to deallocate resources acquired by the object.</p>
+            </div>
+        </div>
+
+        <div class="question-card">
+            <div class="question-header">
+                <h3>20. What is a static member?</h3>
+                <span class="toggle-icon">&#9660;</span>
+            </div>
+            <div class="answer">
+                <p>A static member (variable or function) of a class belongs to the class itself rather than to an instance of the class. All instances of the class share a single copy of the static member. Static members can be accessed without creating an object of the class.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer-info">
+        <p>© 2025 LDRP Institute of Technology and Research</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const questionCards = document.querySelectorAll('.question-card');
+
+            questionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    this.classList.toggle('active');
+
+                    const answer = this.querySelector('.answer');
+                    if (answer.style.display === "block") {
+                        answer.style.display = "none";
+                    } else {
+                        answer.style.display = "block";
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

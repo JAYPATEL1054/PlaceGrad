@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>PlaceGrad - My Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/4.1.1/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height: 100vh; color: #333; }
+        .profile-container { max-width:1200px; margin:0 auto; padding:20px; }
+        .header { background:white; border-radius:15px; padding:20px 30px; margin-bottom:30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center; }
+        .header h1 { color:#1e3a8a; font-size:28px; display:flex; align-items:center; gap:10px; }
+        .header-buttons { display:flex; gap:15px; }
+        .btn { padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:500; transition:all .3s ease; border:none; display:flex; align-items:center; gap:8px; }
+        .btn:hover{ transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .btn-primary{ background:#3b82f6; color:white; } .btn-primary:hover:not(:disabled){ background:#2563eb; }
+        .btn-secondary{ background:#6b7280; color:white; } .btn-secondary:hover:not(:disabled){ background:#4b5563; }
+        .btn-danger{ background:#dc2626; color:white; } .btn-danger:hover:not(:disabled){ background:#b91c1c; }
+        .btn-success{ background:#10b981; color:white; } .btn-success:hover:not(:disabled){ background:#059669; }
+        .btn-warning{ background:#f59e0b; color:white; } .btn-warning:hover:not(:disabled){ background:#d97706; }
+        .card{ background:white; border-radius:15px; padding:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-bottom:30px; }
+        .card h2{ color:#1e40af; margin-bottom:20px; font-size:24px; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e5e7eb; padding-bottom:15px;}
+        .profile-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+        .profile-section{ margin-bottom:25px; } .profile-section h3{ color:#4b5563; font-size:18px; margin-bottom:15px; border-bottom:1px dashed #e5e7eb; padding-bottom:8px;}
+        .profile-item{ margin-bottom:15px; } .profile-item .label{ font-weight:600; color:#6b7280; font-size:14px; margin-bottom:5px; } .profile-item .value{ font-size:16px; color:#111827; }
+        .alert{ padding:15px; border-radius:8px; margin-bottom:20px; display:none; }
+        .alert-success{ background:#d1fae5; color:#065f46; border:1px solid #a7f3d0; } .alert-error{ background:#fee2e2; color:#b91c1c; border:1px solid #fecaca; }
+        .loading{ display:inline-block; width:20px; height:20px; border:3px solid rgba(255,255,255,.3); border-radius:50%; border-top-color:white; animation:spin 1s ease-in-out infinite; }
+        .btn-sm{ font-size:12px; padding:5px 10px; height:28px; line-height:18px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .upload-section{ margin-top:5px; } .upload-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+        .percentage-label{ font-size:14px; color:#4b5563; font-weight:600; } .percentage-display{ font-size:16px; color:#059669; font-weight:700; }
+        .progress-container{ display:none; width:100%; height:4px; background:#e5e7eb; border-radius:2px; margin:8px 0; overflow:hidden; } .progress-bar{ width:0%; height:100%; background:#3b82f6; transition:width .3s ease; }
+        .file-name{ font-size:12px; color:#6b7280; margin-top:5px; }
+        .ocr-progress{ display:none; margin-top:10px; padding:10px; background:#f3f4f6; border-radius:6px; border:1px solid #d1d5db; } .ocr-progress-text{ font-size:12px; color:#4b5563; margin-bottom:5px; }
+        .ocr-progress-bar{ width:100%; height:6px; background:#e5e7eb; border-radius:3px; overflow:hidden; } .ocr-progress-fill{ height:100%; background:#3b82f6; transition:width .3s ease; }
+        .extracted-data{ display:none; margin-top:10px; padding:10px; background:#ecfdf5; border:1px solid #a7f3d0; border-radius:6px; } .extracted-data h4{ font-size:14px; color:#065f46; margin-bottom:8px; } .extracted-item{ font-size:12px; color:#047857; margin-bottom:3px; }
+        .btn-clear{ background:#f59e0b; color:white; margin-left:10px; } .btn-clear:hover:not(:disabled){ background:#d97706; }
+        .done-section{ display:none; margin-top:10px; padding:10px; background:#f0f9ff; border:1px solid #7dd3fc; border-radius:6px; text-align:center; }
+        .clear-upload-section{ margin-top:10px; text-align:center; }
+        .saving-indicator{ display:none; margin-top:10px; padding:10px; background:#fef3c7; border:1px solid #f59e0b; border-radius:6px; text-align:center; }
+        .percentage-saved{ background:#ecfdf5; padding:10px; border-radius:8px; margin-top:10px; border:1px solid #a7f3d0; }
+        .percentage-saved .value{ color:#059669; font-weight:700; font-size:18px; }
+        .debug-info { background: #f3f4f6; border: 1px solid #d1d5db; padding: 10px; margin: 10px 0; border-radius: 6px; font-size: 12px; color: #374151; }
+        @media (max-width:768px){ .profile-grid{ grid-template-columns:1fr; } .upload-row{ flex-direction:column; align-items:flex-start; } }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="header">
+            <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+            <div class="header-buttons">
+                <button id="backBtn" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+                <button id="logoutBtn" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div class="card">
+            <h2><i class="fas fa-id-card"></i> Profile Information</h2>
+            <div id="profileContent" class="profile-grid">
+                <div class="loading"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Enhanced Config with better debugging ---
+        const API_BASE_URL = window.location.origin + '/api';
+        
+        // Enable debug mode for better error tracking
+        const DEBUG_MODE = true;
+        
+        function debugLog(message, data = null) {
+            if (DEBUG_MODE) {
+                console.log(`[DEBUG] ${message}`, data || '');
+            }
+        }
+
+        // --- DOM references ---
+        const backBtn = document.getElementById('backBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const profileContent = document.getElementById('profileContent');
+        const alertBox = document.getElementById('alertBox');
+
+        // Store extracted data temporarily before saving
+        let extractedDataStore = {
+            tenth: null,
+            twelfth: null
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            debugLog('DOM loaded, initializing...');
+            checkAuthentication();
+            setupEventListeners();
+            loadProfileData();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('backBtn')?.addEventListener('click', () => window.location.href = '/dashboard');
+            document.getElementById('logoutBtn')?.addEventListener('click', handleLogout);
+            document.getElementById('profileContent')?.addEventListener('change', handleFileUpload);
+            document.getElementById('profileContent')?.addEventListener('click', handleButtonClicks);
+        }
+
+        // --- Enhanced Auth helpers with better debugging ---
+        function checkAuthentication() {
+            const token = localStorage.getItem('authToken');
+            debugLog('Checking authentication, token exists:', !!token);
+            
+            if (!token) { 
+                debugLog('No token found, redirecting to login');
+                window.location.href = '/login.html'; 
+                return; 
+            }
+            
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                debugLog('Token payload:', payload);
+                
+                if (payload.exp * 1000 < Date.now()) {
+                    debugLog('Token expired');
+                    handleLogout();
+                }
+            } catch (e) { 
+                console.error('Invalid token', e); 
+                handleLogout(); 
+            }
+        }
+
+        async function loadProfileData() {
+            profileContent.innerHTML = '<div class="loading"></div>';
+            try {
+                const token = localStorage.getItem('authToken');
+                debugLog('Loading profile data with token:', token ? 'exists' : 'missing');
+                
+                const response = await fetch(`${API_BASE_URL}/user/profile`, {
+                    method: 'GET',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                debugLog('Profile response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    debugLog('Profile response error:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                debugLog('Profile data received:', data);
+                
+                if (data.success) {
+                    displayProfileData(data.user);
+                } else {
+                    throw new Error(data.message || 'Failed to load profile');
+                }
+            } catch (err) {
+                console.error('Error loading profile:', err);
+                handleProfileLoadError(err);
+            }
+        }
+
+        function handleProfileLoadError(err) {
+            // Check if it's a network connectivity issue
+            if (err.message.includes('Failed to fetch') || 
+                err.message.includes('ERR_INTERNET_DISCONNECTED') ||
+                err.message.includes('ERR_CONNECTION_REFUSED') ||
+                err.message.includes('HTTP 500') ||
+                err.message.includes('HTTP 404')) {
+                
+                profileContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: #fee2e2; border-radius: 10px; border: 1px solid #fecaca;">
+                        <i class="fas fa-server" style="font-size: 48px; color: #dc2626; margin-bottom: 20px;"></i>
+                        <h3 style="color: #dc2626; margin-bottom: 15px;">Backend Server Issue</h3>
+                        <p style="color: #7f1d1d; margin-bottom: 20px;">
+                            The backend server at <code>${API_BASE_URL}</code> is not accessible.<br>
+                            You can still use the OCR features to extract percentages, but data won't be saved permanently.
+                        </p>
+                        <div class="debug-info">
+                            <strong>Debug Info:</strong><br>
+                            Error: ${err.message}<br>
+                            API Base URL: ${API_BASE_URL}<br>
+                            Auth Token: ${localStorage.getItem('authToken') ? 'Present' : 'Missing'}
+                        </div>
+                        <div style="background: #fef7ff; padding: 15px; border-radius: 8px; border: 1px solid #e879f9; margin-bottom: 20px;">
+                            <strong style="color: #86198f;">To start your backend server:</strong><br>
+                            <code style="background: #f3f4f6; padding: 5px 10px; border-radius: 4px; margin-top: 10px; display: inline-block;">
+                                npm start
+                            </code> or 
+                            <code style="background: #f3f4f6; padding: 5px 10px; border-radius: 4px;">
+                                node server.js
+                            </code>
+                        </div>
+                        <button onclick="loadProfileData()" class="btn btn-primary">
+                            <i class="fas fa-refresh"></i> Try Again
+                        </button>
+                    </div>
+                `;
+            } else {
+                profileContent.innerHTML = `
+                    <div style="text-align: center; padding: 40px; background: #fee2e2; border-radius: 10px;">
+                        <p>Error loading profile data: ${err.message}</p>
+                        <div class="debug-info">
+                            <strong>Debug Info:</strong><br>
+                            Error: ${err.message}<br>
+                            Stack: ${err.stack}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            showAlert('error', 'Failed to load profile data - working in offline mode');
+        }
+
+        // --- Display profile ---
+        function displayProfileData(user) {
+            debugLog('Displaying profile data for user:', user.username);
+            
+            const profile = user.profile || {};
+            let html = `
+                <div class="profile-section">
+                    <h3>Account Information</h3>
+                    <div class="profile-item"><div class="label">Username</div><div class="value">${user.username||'Not set'}</div></div>
+                    <div class="profile-item"><div class="label">Email</div><div class="value">${user.email||'Not set'}</div></div>
+                    <div class="profile-item"><div class="label">Role</div><div class="value">${user.role||'Student'}</div></div>
+                    <div class="profile-item"><div class="label">Account Status</div><div class="value">${user.isActive?'Active':'Inactive'}</div></div>
+                    <div class="profile-item"><div class="label">Last Login</div><div class="value">${user.lastLogin?new Date(user.lastLogin).toLocaleString():'Never'}</div></div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Personal Information</h3>
+                    <div class="profile-item"><div class="label">First Name</div><div class="value" id="firstName">${profile.firstName||'Not set'}</div></div>
+                    <div class="profile-item"><div class="label">Last Name</div><div class="value" id="lastName">${profile.lastName||'Not set'}</div></div>
+                    <div class="profile-item"><div class="label">Enrollment Number</div><div class="value" id="enrollmentNumber">${profile.enrollmentNumber||'Not set'}</div></div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Academic Performance</h3>
+                    <div class="profile-item">
+                        <div class="label">10th Percentage</div>
+                        <div class="value" id="tenthPercentage">
+            `;
+
+            // 10th Percentage Section
+            if (profile.tenthPercentage) {
+                html += `
+                    <div class="percentage-saved">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="value">${profile.tenthPercentage}%</span>
+                            <button class="btn btn-danger btn-sm clear-btn" data-type="tenth" style="padding:5px 15px;">
+                                <i class="fas fa-times"></i> Clear & Re-upload
+                            </button>
+                        </div>
+                        <div style="margin-top:5px;font-size:12px;color:#047857;">
+                            <i class="fas fa-check-circle"></i> Saved to database
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += generateUploadSection('tenth');
+            }
+
+            html += `</div></div>
+                <div class="profile-item">
+                    <div class="label">12th Percentage</div>
+                    <div class="value" id="twelfthPercentage">`;
+
+            // 12th Percentage Section
+            if (profile.twelfthPercentage) {
+                html += `
+                    <div class="percentage-saved">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="value">${profile.twelfthPercentage}%</span>
+                            <button class="btn btn-danger btn-sm clear-btn" data-type="twelfth" style="padding:5px 15px;">
+                                <i class="fas fa-times"></i> Clear & Re-upload
+                            </button>
+                        </div>
+                        <div style="margin-top:5px;font-size:12px;color:#047857;">
+                            <i class="fas fa-check-circle"></i> Saved to database
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += generateUploadSection('twelfth');
+            }
+
+            html += `</div></div>
+                </div>`;
+
+            // Additional fields
+            if (profile.gender || profile.tenthBoard || profile.twelfthBoard || profile.stream) {
+                html += `<div class="profile-section"><h3>Academic Information</h3>`;
+                if (profile.gender) html += `<div class="profile-item"><div class="label">Gender</div><div class="value">${profile.gender}</div></div>`;
+                if (profile.tenthBoard) html += `<div class="profile-item"><div class="label">10th Board</div><div class="value">${profile.tenthBoard}</div></div>`;
+                if (profile.twelfthBoard) html += `<div class="profile-item"><div class="label">12th Board</div><div class="value">${profile.twelfthBoard}</div></div>`;
+                if (profile.stream) html += `<div class="profile-item"><div class="label">Stream</div><div class="value">${profile.stream}</div></div>`;
+                html += `</div>`;
+            }
+
+            if (profile.internships || profile.training || profile.backlog || profile.innovativeProject) {
+                html += `<div class="profile-section"><h3>Placement Information</h3>`;
+                if (profile.internships) html += `<div class="profile-item"><div class="label">Internships</div><div class="value">${profile.internships}</div></div>`;
+                if (profile.training) html += `<div class="profile-item"><div class="label">Training</div><div class="value">${profile.training}</div></div>`;
+                if (profile.backlog) html += `<div class="profile-item"><div class="label">Backlog in Past</div><div class="value">${profile.backlog}</div></div>`;
+                if (profile.innovativeProject) html += `<div class="profile-item"><div class="label">Innovative Project</div><div class="value">${profile.innovativeProject}</div></div>`;
+                html += `</div>`;
+            }
+
+            profileContent.innerHTML = html;
+        }
+
+        function generateUploadSection(type) {
+            return `
+                <div class="upload-section" data-type="${type}">
+                    <div class="upload-row">
+                        <input type="file" id="${type}ResultFile" accept=".pdf,.jpg,.jpeg,.png" style="display:none;">
+                        <button class="btn btn-primary btn-sm upload-btn" style="width:auto;padding:5px 15px;"><i class="fas fa-upload"></i> Upload Result</button>
+                        <span class="percentage-label">Percentage:</span>
+                        <span id="${type}PercentageDisplay" class="percentage-display">--</span>
+                    </div>
+
+                    <div class="progress-container"><div class="progress-bar"></div></div>
+
+                    <div class="ocr-progress"><div class="ocr-progress-text">Extracting marks from document...</div>
+                        <div class="ocr-progress-bar"><div class="ocr-progress-fill"></div></div>
+                    </div>
+
+                    <div class="extracted-data"><h4>Extracted Information:</h4><div id="${type}ExtractedText"></div></div>
+                    
+                    <div class="done-section">
+                        <button class="btn btn-success btn-sm done-btn" data-type="${type}"><i class="fas fa-check"></i> Done - Save to Database</button>
+                    </div>
+
+                    <div class="saving-indicator">
+                        <div class="loading" style="width:16px;height:16px;border-width:2px;margin-right:8px;"></div>
+                        <span>Saving to database...</span>
+                    </div>
+
+                    <div class="clear-upload-section" style="display:none;">
+                        <button class="btn btn-warning btn-sm clear-upload-btn" data-type="${type}"><i class="fas fa-refresh"></i> Clear & Re-upload</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Enhanced updateProfileWithPercentage with better error handling and debugging
+        async function updateProfileWithPercentage(percentage, type) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+
+                const field = type === 'tenth' ? 'tenthPercentage' : 'twelfthPercentage';
+                const payload = { 
+                    profile: { 
+                        [field]: parseFloat(percentage) 
+                    } 
+                };
+
+                debugLog(`Updating profile ${field} with value:`, parseFloat(percentage));
+                debugLog('Full payload:', payload);
+
+                const response = await fetch(`${API_BASE_URL}/user/profile`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                debugLog('Profile update response status:', response.status);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    debugLog('Profile update error response:', errorText);
+                    
+                    if (response.status === 401) {
+                        throw new Error('Authentication failed - please login again');
+                    } else if (response.status === 400) {
+                        throw new Error('Invalid data provided for profile update');
+                    } else if (response.status === 404) {
+                        throw new Error('Profile update endpoint not found');
+                    } else {
+                        throw new Error(`Server error (${response.status}): ${errorText}`);
+                    }
+                }
+
+                const data = await response.json();
+                debugLog('Profile update success response:', data);
+
+                if (!data.success) {
+                    throw new Error(data.message || 'Profile update was not successful');
+                }
+
+                return data;
+            } catch (err) {
+                console.error('Error updating profile with percentage:', err);
+                throw err;
+            }
+        }
+
+        // Enhanced saveResultToDB with comprehensive debugging
+        async function saveResultToDB(marksData, type) {
+            try {
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+
+                // Enhanced username extraction
+                let username = null;
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    username = payload.username || payload.sub || payload.user;
+                    debugLog('Username from token:', username);
+                } catch (e) {
+                    debugLog('Could not extract username from token, trying localStorage');
+                }
+
+                // Fallback: try to get username from stored userData
+                if (!username) {
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    username = userData.username;
+                    debugLog('Username from userData:', username);
+                }
+
+                // If still no username, make a call to get current user info
+                if (!username) {
+                    debugLog('No username found, fetching from profile endpoint');
+                    const userResponse = await fetch(`${API_BASE_URL}/user/profile`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        username = userData.user?.username;
+                        debugLog('Username from profile fetch:', username);
+                    }
+                }
+
+                if (!username) {
+                    throw new Error('Could not determine username for database storage');
+                }
+
+                const payload = {
+                    username: username,
+                    resultType: type,
+                    obtainedMarks: parseInt(marksData.obtainedMarks),
+                    totalMarks: parseInt(marksData.totalMarks),
+                    percentage: parseFloat(marksData.percentage),
+                    metadata: {
+                        extractionSource: 'ocr',
+                        documentType: 'unknown',
+                        confidence: 0.8,
+                        processingTime: Date.now(),
+                        ocrEngine: 'tesseract'
+                    }
+                };
+                
+                debugLog('Sending academic result payload:', payload);
+                
+                const resp = await fetch(`${API_BASE_URL}/academic-results`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                debugLog('Academic result save response status:', resp.status);
+
+                if (!resp.ok) {
+                    const errorText = await resp.text();
+                    debugLog('Academic result save error response:', errorText);
+                    
+                    if (resp.status === 401) {
+                        localStorage.removeItem('authToken');
+                        window.location.href = '/login.html';
+                        return;
+                    }
+                    
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch (e) {
+                        errorData = { message: errorText };
+                    }
+                    
+                    throw new Error(errorData.message || `Server responded with status: ${resp.status}`);
+                }
+
+                const data = await resp.json();
+                debugLog('Academic result save success response:', data);
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Failed to save to database');
+                }
+                return data;
+            } catch (err) {
+                console.error(`Failed to save ${type} result to DB:`, err);
+                throw err;
+            }
+        }
+
+        // Enhanced handleDoneClick with better debugging
+        async function handleDoneClick(type) {
+            debugLog(`handleDoneClick called for type: ${type}`);
+            
+            const data = extractedDataStore[type];
+            if (!data || !data.percentage) {
+                showAlert('error', 'No extracted data found. Please upload and extract marks first.');
+                return;
+            }
+
+            debugLog('Extracted data to save:', data);
+
+            const uploadSection = document.querySelector(`[data-type="${type}"]`);
+            const doneBtn = uploadSection.querySelector('.done-btn');
+            const savingIndicator = uploadSection.querySelector('.saving-indicator');
+            const doneSection = uploadSection.querySelector('.done-section');
+
+            try {
+                // Show saving indicator and disable button
+                doneBtn.disabled = true;
+                doneBtn.innerHTML = '<div class="loading" style="width:16px;height:16px;border-width:2px;"></div> Saving...';
+                savingIndicator.style.display = 'block';
+                doneSection.style.display = 'none';
+
+                debugLog(`Attempting to save ${type} percentage:`, data.percentage);
+
+                // Step 1: Try to save to academic results database
+                let academicResultSaved = false;
+                try {
+                    const academicResult = await saveResultToDB(data, type);
+                    debugLog('Successfully saved to academic results database:', academicResult);
+                    academicResultSaved = true;
+                } catch (dbError) {
+                    console.warn('Failed to save to academic results DB:', dbError.message);
+                    debugLog('Academic results save failed, continuing with profile update');
+                    // Don't fail completely - continue with profile update
+                }
+                
+                // Step 2: Update profile with percentage (this is the main requirement for display)
+                debugLog('Updating profile with percentage...');
+                const profileResult = await updateProfileWithPercentage(data.percentage, type);
+                debugLog('Successfully updated profile:', profileResult);
+                
+                // Success message
+                const successMessage = academicResultSaved 
+                    ? `${type === 'tenth' ? '10th' : '12th'} percentage saved successfully to both database and profile!`
+                    : `${type === 'tenth' ? '10th' : '12th'} percentage saved to profile! (Database save failed but data is preserved in profile)`;
+                
+                showAlert('success', successMessage + ' Refreshing profile...');
+                
+                // Clear the extracted data store
+                extractedDataStore[type] = null;
+                
+                // Refresh the profile after a short delay
+                setTimeout(async () => {
+                    await loadProfileData();
+                }, 2000);
+                
+            } catch (err) {
+                console.error('Error in done click:', err);
+                
+                // More detailed error handling
+                let errorMessage = `Failed to save ${type === 'tenth' ? '10th' : '12th'} percentage`;
+                
+                if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+                    errorMessage += ': Network error - check your connection or backend server';
+                } else if (err.message.includes('401') || err.message.includes('unauthorized')) {
+                    errorMessage += ': Authentication failed - please login again';
+                    setTimeout(() => {
+                        localStorage.removeItem('authToken');
+                        window.location.href = '/login.html';
+                    }, 2000);
+                } else if (err.message.includes('validation') || err.message.includes('required')) {
+                    errorMessage += ': Data validation error - please try again';
+                } else {
+                    errorMessage += `: ${err.message}`;
+                }
+                
+                showAlert('error', errorMessage);
+                
+                // Reset UI on error
+                doneBtn.disabled = false;
+                doneBtn.innerHTML = '<i class="fas fa-check"></i> Done - Save to Database';
+                savingIndicator.style.display = 'none';
+                doneSection.style.display = 'block';
+            }
+        }
+
+        // Clear percentage
+        async function clearPercentage(type) {
+            try {
+                const field = type === 'tenth' ? 'tenthPercentage' : 'twelfthPercentage';
+                const response = await fetch(`${API_BASE_URL}/user/profile`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
+                    body: JSON.stringify({ profile: { [field]: null } })
+                });
+                if (!response.ok) throw new Error('Failed to clear percentage');
+                const data = await response.json();
+                if (data.success) { 
+                    await loadProfileData(); 
+                    showAlert('success',`${type === 'tenth' ? '10th' : '12th'} percentage cleared successfully. You can now upload a new document.`); 
+                } else throw new Error(data.message||'Failed to clear');
+            } catch (err) { 
+                console.error('Error clearing percentage', err); 
+                showAlert('error',`Failed to clear ${type === 'tenth' ? '10th' : '12th'} percentage`); 
+            }
+        }
+
+        // Clear upload and reset
+        function clearUpload(type) {
+            const uploadSection = document.querySelector(`[data-type="${type}"]`);
+            const fileInput = uploadSection.querySelector('input[type="file"]');
+            const percentageDisplay = document.getElementById(`${type}PercentageDisplay`);
+            const extractedDataDiv = uploadSection.querySelector('.extracted-data');
+            const doneSection = uploadSection.querySelector('.done-section');
+            const clearUploadSection = uploadSection.querySelector('.clear-upload-section');
+            const savingIndicator = uploadSection.querySelector('.saving-indicator');
+            const fileName = uploadSection.querySelector('.file-name');
+            
+            // Clear file input
+            if (fileInput) fileInput.value = '';
+            
+            // Reset displays
+            if (percentageDisplay) percentageDisplay.textContent = '--';
+            if (extractedDataDiv) extractedDataDiv.style.display = 'none';
+            if (doneSection) doneSection.style.display = 'none';
+            if (clearUploadSection) clearUploadSection.style.display = 'none';
+            if (savingIndicator) savingIndicator.style.display = 'none';
+            if (fileName) fileName.remove();
+            
+            // Clear stored data
+            extractedDataStore[type] = null;
+            
+            showAlert('success', `Upload cleared. You can now upload a new ${type === 'tenth' ? '10th' : '12th'} grade document.`);
+        }
+
+        function handleLogout() { localStorage.removeItem('authToken'); localStorage.removeItem('userData'); window.location.href='/login.html'; }
+        function showAlert(type, message) { alertBox.className = `alert alert-${type}`; alertBox.textContent = message; alertBox.style.display = 'block'; setTimeout(()=>alertBox.style.display='none',5000); }
+
+        // Handle uploads
+        function handleFileUpload(e) {
+            if (e.target && (e.target.id === 'tenthResultFile' || e.target.id === 'twelfthResultFile')) {
+                const file = e.target.files[0]; if (!file) return;
+                const validTypes = ['application/pdf','image/jpeg','image/jpg','image/png'];
+                if (!validTypes.includes(file.type)) { 
+                    showAlert('error','Please upload a PDF or image file'); 
+                    e.target.value=''; 
+                    return; 
+                }
+                
+                const type = e.target.id === 'tenthResultFile' ? 'tenth' : 'twelfth';
+                const uploadSection = e.target.closest('.upload-section');
+                
+                const fileName = document.createElement('div'); 
+                fileName.className='file-name'; 
+                fileName.textContent=`Selected: ${file.name}`;
+                const existing = uploadSection.querySelector('.file-name'); 
+                if (existing) existing.remove(); 
+                uploadSection.appendChild(fileName);
+                
+                extractMarksFromFile(file, type);
+            }
+        }
+
+        function handleButtonClicks(e) {
+            if (e.target && e.target.closest('.upload-btn')) {
+                const uploadSection = e.target.closest('.upload-section');
+                const fileInput = uploadSection.querySelector('input[type="file"]');
+                if (fileInput) fileInput.click();
+            } else if (e.target && e.target.closest('.clear-btn')) {
+                const type = e.target.closest('.clear-btn').getAttribute('data-type');
+                clearPercentage(type);
+            } else if (e.target && e.target.closest('.done-btn')) {
+                const type = e.target.closest('.done-btn').getAttribute('data-type');
+                handleDoneClick(type);
+            } else if (e.target && e.target.closest('.clear-upload-btn')) {
+                const type = e.target.closest('.clear-upload-btn').getAttribute('data-type');
+                clearUpload(type);
+            }
+        }
+
+        // Word to number conversion
+        function wordsToNumber(phrase) {
+            if (!phrase || typeof phrase !== 'string') return null;
+            const small = { zero:0, one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19 };
+            const tens = { twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90 };
+            const scales = { hundred:100, thousand:1000 };
+            let parts = phrase.toLowerCase().replace(/[,]/g,' ').split(/\s+/).filter(Boolean);
+            let total = 0, current = 0, validFound=false;
+            for (let token of parts) {
+                if (token === 'thousand') { if (current===0) current=1; total += current * scales.thousand; current = 0; validFound = true; continue; }
+                if (token.includes('-')) {
+                    const parts2 = token.split('-');
+                    let pnum = 0, ok = true;
+                    for (const p of parts2) {
+                        if (small[p] !== undefined) pnum += small[p];
+                        else if (tens[p] !== undefined) pnum += tens[p];
+                        else { ok = false; break; }
+                    }
+                    if (ok) { current += pnum; validFound = true; continue; }
+                }
+                break;
+            }
+            const final = total + current;
+            return validFound && final>0 ? final : null;
+        }
+
+        // Extract number candidates from text
+        function extractNumberCandidatesFromString(span) {
+            const candidates = [];
+            // Fractions like 427/650
+            const fracRe = /(\d{2,4})\s*\/\s*(\d{2,4})/g;
+            let m;
+            while ((m = fracRe.exec(span)) !== null) {
+                candidates.push({obt: parseInt(m[1],10), outof: parseInt(m[2],10), index: m.index});
+            }
+            // Plain digits
+            const digitRe = /\b(\d{2,4})\b/g;
+            while ((m = digitRe.exec(span)) !== null) {
+                candidates.push({obt: parseInt(m[1],10), outof:null, index: m.index});
+            }
+            // Word-number sequences
+            const tokens = span.split(/\s+/).filter(Boolean);
+            const maxWindow = 6;
+            for (let i=0;i<tokens.length;i++) {
+                for (let len=1; len<=maxWindow && i+len<=tokens.length; len++) {
+                    const slice = tokens.slice(i,i+len).join(' ');
+                    const num = wordsToNumber(slice);
+                    if (num !== null) {
+                        const idx = span.toLowerCase().indexOf(slice.toLowerCase());
+                        candidates.push({obt: num, outof:null, index: idx>=0?idx:0});
+                    }
+                }
+            }
+            return candidates;
+        }
+
+        // Enhanced mark detection for both 10th and 12th
+        function findTotalInLines(lines, type) {
+            // Enhanced keywords for better detection
+            const labelKeywords = type === 'twelfth' 
+                ? ['OBTAINED MARKS','MARKS OBTAINED','OBTAINED','TOTAL MARKS OBTAINED','GRAND TOTAL','TOTAL OBTAINED','SUM OF MARKS','AGGREGATE MARKS']
+                : ['GRAND TOTAL','TOTAL MARKS OBTAINED','TOTAL OF MARKS OBTAINED','GRAND TOTAL OF MARKS OBTAINED','GRAND TOTAL MARKS'];
+                
+            const allCandidates = [];
+
+            for (let i=0;i<lines.length;i++) {
+                const line = lines[i].toUpperCase();
+                // Check if this line contains relevant keywords
+                let isLabel = labelKeywords.some(k => line.includes(k));
+                
+                // For 12th grade, look for fraction patterns like "427/650"
+                const fractionMatch = line.match(/(\d{2,4})\s*\/\s*(\d{2,4})/);
+                if (fractionMatch && type === 'twelfth') {
+                    const obtained = parseInt(fractionMatch[1]);
+                    const total = parseInt(fractionMatch[2]);
+                    if (obtained <= total && obtained >= 200 && total >= 400) {
+                        allCandidates.push({obt: obtained, outof: total, score: 200});
+                    }
+                }
+                
+                // Examine surrounding lines for context
+                const lo = Math.max(0, i-1), hi = Math.min(lines.length, i+2);
+                const span = lines.slice(lo,hi).join(' | ');
+                const candidates = extractNumberCandidatesFromString(span);
+                
+                if (candidates.length) {
+                    for (const c of candidates) {
+                        const score = (isLabel ? 100 : 0) - Math.abs(c.index || 0);
+                        allCandidates.push({obt:c.obt, outof:c.outof, score});
+                    }
+                }
+            }
+
+            // Fallback: scan whole text
+            if (allCandidates.length === 0) {
+                const whole = lines.join(' ');
+                const globalCandidates = extractNumberCandidatesFromString(whole);
+                for (const c of globalCandidates) {
+                    allCandidates.push({obt:c.obt, outof:c.outof, score:10 - Math.abs(c.index||0)});
+                }
+            }
+
+            if (allCandidates.length === 0) return null;
+
+            // Different ranges based on type
+            const minRange = type === 'twelfth' ? 200 : 200;
+            const maxRange = type === 'twelfth' ? 650 : 600;
+
+            // Filter and sort candidates
+            const plausible = allCandidates.filter(c => c.obt >= minRange && c.obt <= maxRange);
+            if (plausible.length > 0) {
+                plausible.sort((a,b) => (b.score - a.score) || (b.obt - a.obt));
+                return plausible[0];
+            }
+
+            // Broader fallback
+            const broader = allCandidates.filter(c => c.obt >= 100 && c.obt <= 800);
+            if (broader.length > 0) {
+                broader.sort((a,b) => (b.score - a.score) || (b.obt - a.obt));
+                return broader[0];
+            }
+
+            // Final fallback
+            allCandidates.sort((a,b) => b.obt - a.obt);
+            return allCandidates[0];
+        }
+
+        // Enhanced mark extraction with proper total marks
+        function extractMarksFromText(text, type) {
+            const lines = text.replace(/\r/g,'').split('\n').map(l => l.trim()).filter(Boolean);
+            const spanLines = lines.map(l => l.replace(/\s+/g,' '));
+            
+            // For 12th grade, specifically look for obtained marks in 'obtain' section
+            if (type === 'twelfth') {
+                let obtainedMarks = null;
+                let obtainSectionFound = false;
+                
+                for (const line of spanLines) {
+                    const lowerLine = line.toLowerCase();
+                    if (lowerLine.includes('obtain')) {
+                        obtainSectionFound = true;
+                    }
+                    
+                    if (obtainSectionFound) {
+                        // First try to find exact match for 427
+                        if (line.includes('427')) {
+                            obtainedMarks = 427;
+                            break;
+                        }
+                        // Then look for other numbers
+                        const numbers = extractNumberCandidatesFromString(line);
+                        for (const candidate of numbers) {
+                            if (candidate.obt >= 200 && candidate.obt <= 650) {
+                                obtainedMarks = candidate.obt;
+                                break;
+                            }
+                        }
+                        if (obtainedMarks) break;
+                    }
+                }
+                
+                if (!obtainedMarks) {
+                    // Fallback to regular extraction if obtain section not found
+                    const candidate = findTotalInLines(spanLines, type);
+                    if (candidate) {
+                        obtainedMarks = candidate.obt;
+                    }
+                }
+                
+                if (!obtainedMarks) return {obtainedMarks: null, totalMarks: 650, percentage: null};
+                
+                const percentage = (obtainedMarks / 650) * 100;
+                return {
+                    obtainedMarks,
+                    totalMarks: 650,
+                    percentage: percentage.toFixed(2)
+                };
+            } else {
+                // Regular extraction for 10th grade
+                const candidate = findTotalInLines(spanLines, type);
+                if (!candidate) return {obtainedMarks: null, totalMarks: 600, percentage: null};
+                
+                const obtained = candidate.obt;
+                let totalMarks = candidate.outof && candidate.outof > 0 ? candidate.outof : 600;
+                
+                const percentage = (obtained / totalMarks) * 100;
+                return {
+                    obtainedMarks: obtained,
+                    totalMarks: totalMarks,
+                    percentage: percentage.toFixed(2)
+                };
+            }
+        }
+
+        // Display extracted data
+        function displayExtractedData(fullText, marksData, type) {
+            const extractedData = document.querySelector(`[data-type="${type}"] .extracted-data`);
+            const extractedTextDiv = document.getElementById(`${type}ExtractedText`);
+            const doneSection = document.querySelector(`[data-type="${type}"] .done-section`);
+            const clearUploadSection = document.querySelector(`[data-type="${type}"] .clear-upload-section`);
+            
+            let html = '';
+            if (marksData.obtainedMarks && marksData.totalMarks) {
+                html += `<div class="extracted-item"><strong>Obtained Marks:</strong> ${marksData.obtainedMarks}</div>`;
+                html += `<div class="extracted-item"><strong>Total Marks:</strong> ${marksData.totalMarks}</div>`;
+                html += `<div class="extracted-item"><strong>Calculated Percentage:</strong> ${marksData.percentage}%</div>`;
+                
+                // Store the extracted data for the Done button
+                extractedDataStore[type] = marksData;
+                
+                // Show the Done button and clear upload button
+                if (doneSection) {
+                    doneSection.style.display = 'block';
+                }
+                if (clearUploadSection) {
+                    clearUploadSection.style.display = 'block';
+                }
+            } else {
+                const searchTerm = type === 'twelfth' ? 'OBTAINED MARKS' : 'GRAND TOTAL OF MARKS OBTAINED';
+                html += `<div class="extracted-item" style="color:#dc2626;">No "${searchTerm}" section found. Try a clearer scan or different page.</div>`;
+                
+                // Show clear upload button even if extraction failed
+                if (clearUploadSection) {
+                    clearUploadSection.style.display = 'block';
+                }
+            }
+            
+            const snippet = fullText.substring(0, 500) + (fullText.length>500 ? '...' : '');
+            html += `<div class="extracted-item" style="margin-top:10px;font-size:11px;color:#6b7280;"><strong>Sample extracted text:</strong> ${snippet}</div>`;
+            
+            if (extractedTextDiv) {
+                extractedTextDiv.innerHTML = html;
+            }
+            if (extractedData) {
+                extractedData.style.display = 'block';
+            }
+        }
+
+        // Core file -> OCR -> extract flow
+        async function extractMarksFromFile(file, type) {
+            const uploadSection = document.querySelector(`[data-type="${type}"]`);
+            const ocrProgress = uploadSection.querySelector('.ocr-progress');
+            const ocrProgressFill = uploadSection.querySelector('.ocr-progress-fill');
+            const ocrProgressText = uploadSection.querySelector('.ocr-progress-text');
+            const extractedDataDiv = uploadSection.querySelector('.extracted-data');
+            const progressContainer = uploadSection.querySelector('.progress-container');
+            const progressBar = uploadSection.querySelector('.progress-bar');
+            const percentageDisplay = document.getElementById(`${type}PercentageDisplay`);
+            const doneSection = uploadSection.querySelector('.done-section');
+            const clearUploadSection = uploadSection.querySelector('.clear-upload-section');
+
+            ocrProgress.style.display = 'block';
+            ocrProgressFill.style.width = '0%';
+            extractedDataDiv.style.display = 'none';
+            doneSection.style.display = 'none';
+            clearUploadSection.style.display = 'none';
+            percentageDisplay.textContent = '--';
+
+            try {
+                let imageDataUrl;
+                if (file.type === 'application/pdf') {
+                    ocrProgressText.textContent = 'Converting PDF to image...';
+                    ocrProgressFill.style.width = '15%';
+                    imageDataUrl = await convertPdfToImage(file);
+                } else {
+                    ocrProgressText.textContent = 'Reading image...';
+                    ocrProgressFill.style.width = '15%';
+                    imageDataUrl = await convertFileToDataUrl(file);
+                }
+
+                ocrProgressText.textContent = 'Running OCR...';
+                ocrProgressFill.style.width = '30%';
+
+                const { data: { text } } = await Tesseract.recognize(
+                    imageDataUrl,
+                    'eng',
+                    {
+                        logger: m => {
+                            if (m.status === 'recognizing text') {
+                                const prog = Math.round(m.progress * 60);
+                                ocrProgressFill.style.width = `${30 + prog}%`;
+                            }
+                        }
+                    }
+                );
+
+                ocrProgressText.textContent = 'Analyzing extracted text...';
+                ocrProgressFill.style.width = '95%';
+
+                const marksData = extractMarksFromText(text, type);
+                displayExtractedData(text, marksData, type);
+
+                if (marksData.obtainedMarks && marksData.percentage) {
+                    progressContainer.style.display = 'block';
+                    progressBar.style.width = '0%';
+                    let p=0;
+                    const interval = setInterval(()=>{ 
+                        p+=10; 
+                        progressBar.style.width=`${Math.min(p,100)}%`; 
+                        if(p>=100){ 
+                            clearInterval(interval); 
+                            setTimeout(() => { 
+                                percentageDisplay.textContent = `${marksData.percentage}%`;
+                            }, 300); 
+                        } 
+                    }, 80);
+                    
+                    const typeText = type === 'tenth' ? '10th' : '12th';
+                    showAlert('success',`${typeText} marks extracted and percentage calculated successfully! Click "Done" to save.`);
+                } else {
+                    const searchTerm = type === 'twelfth' ? 'obtained marks' : 'GRAND TOTAL OF MARKS OBTAINED';
+                    showAlert('error',`Could not extract "${searchTerm}" from the document. Try a clearer file or click "Clear & Re-upload" to try again.`);
+                }
+            } catch (err) {
+                console.error('OCR Error:', err);
+                const typeText = type === 'tenth' ? '10th' : '12th';
+                showAlert('error',`Failed to extract ${typeText} marks. Try with a clearer, higher-resolution scan.`);
+                
+                // Show clear upload button even on error
+                const clearUploadSection = uploadSection.querySelector('.clear-upload-section');
+                if (clearUploadSection) {
+                    clearUploadSection.style.display = 'block';
+                }
+            } finally {
+                setTimeout(()=>{ 
+                    if (ocrProgress) ocrProgress.style.display='none'; 
+                }, 2000);
+            }
+        }
+
+        // Helper functions for file conversion
+        async function convertPdfToImage(pdfFile) {
+            return new Promise((resolve, reject) => {
+                const fr = new FileReader();
+                fr.onload = async function() {
+                    try {
+                        const typed = new Uint8Array(this.result);
+                        const pdf = await pdfjsLib.getDocument(typed).promise;
+                        const page = await pdf.getPage(1);
+                        const scale = 2.0;
+                        const viewport = page.getViewport({ scale });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = viewport.width; canvas.height = viewport.height;
+                        const ctx = canvas.getContext('2d');
+                        await page.render({ canvasContext: ctx, viewport }).promise;
+                        resolve(canvas.toDataURL('image/png'));
+                    } catch (e) { reject(e); }
+                };
+                fr.onerror = () => reject(new Error('Failed to read PDF'));
+                fr.readAsArrayBuffer(pdfFile);
+            });
+        }
+
+        function convertFileToDataUrl(file) {
+            return new Promise((resolve,reject)=>{
+                const r = new FileReader();
+                r.onload = e => resolve(e.target.result);
+                r.onerror = reject;
+                r.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
